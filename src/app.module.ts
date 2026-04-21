@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Usuario } from './usuarios/entities/usuario.entity';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME', 'canchas'),
-        entities: [],
+        entities: [Usuario],
         synchronize: true,
       }),
     }),
