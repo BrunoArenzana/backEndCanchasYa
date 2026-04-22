@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CanchaService } from './cancha.service';
-import { CanchaGateway } from './cancha.gateway';
+import { CanchaController } from './cancha.controller';
 
 @Module({
-  providers: [CanchaGateway, CanchaService],
+  controllers: [CanchaController],
+  providers: [CanchaService],
 })
 export class CanchaModule {}

@@ -16,6 +16,7 @@ import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
