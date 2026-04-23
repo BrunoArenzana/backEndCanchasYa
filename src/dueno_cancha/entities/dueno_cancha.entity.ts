@@ -5,22 +5,22 @@ import { Club } from '../../club/entities/club.entity';
 @Entity('dueno_cancha')
 export class DuenoCancha {
   @PrimaryGeneratedColumn({ name: 'id_dueno' })
-  id_dueno: number;
+  id_dueno!: number;
 
   @Column({ name: 'nombre_dueno', type: 'varchar', length: 100 })
-  nombre_dueno: string;
+  nombre_dueno!: string;
 
   @Column({ name: 'apellido_dueno', type: 'varchar', length: 100 })
-  apellido_dueno: string;
+  apellido_dueno!: string;
 
   @Column({ name: 'email_dueno', type: 'varchar', length: 150, unique: true })
-  email_dueno: string;
+  email_dueno!: string;
 
   @Column({ name: 'password_dueno', type: 'varchar', length: 255 })
-  password_dueno: string;
+  password_dueno!: string;
 
   @Column({ name: 'telefono_dueno', type: 'varchar', length: 20, nullable: true })
-  telefono_dueno: string;
+  telefono_dueno!: string;
 
   @Column({ 
     name: 'estado_dueno', 
@@ -28,15 +28,15 @@ export class DuenoCancha {
     enum: ['activo', 'inactivo', 'pendiente_aprobacion'],
     default: 'pendiente_aprobacion'
   })
-  estado_dueno: string;
+  estado_dueno!: string;
 
   @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_admin_aprobado' })
-  admin_aprobado: Admin;
+  admin_aprobado!: Admin;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
-  created_at: Date;
+  created_at!: Date;
 
   @OneToMany(() => Club, (club) => club.dueno)
-  clubs: Club[];
+  clubs!: Club[];
 }

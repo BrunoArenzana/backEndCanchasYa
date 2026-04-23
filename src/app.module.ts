@@ -10,7 +10,15 @@ import { DuenoCanchaModule } from './dueno_cancha/dueno_cancha.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
-
+import { Usuario } from './usuario/entities/usuario.entity';
+import { Admin } from './admin/entities/admin.entity';
+import { Reserva } from './reserva/entities/reserva.entity';
+import { Club } from './club/entities/club.entity';
+import { Pago } from './pago/entities/pago.entity';
+import { DuenoCancha } from './dueno_cancha/entities/dueno_cancha.entity';
+import { Deporte } from './deporte/entities/deporte.entity';
+import { Cancha } from './cancha/entities/cancha.entity';
+import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity';
 
 
 @Module({
@@ -24,9 +32,19 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
         port: 3306,
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true
+        database: configService.get<string>('DB_NAME', 'canchasya'),
+        entities: [
+          Usuario,
+          Admin,
+          Reserva,
+          Club,
+          Pago,
+          DuenoCancha,
+          Deporte,
+          Cancha,
+          Disponibilidad,
+        ],
+        synchronize: true,
       }),
     }),
     AdminModule,
@@ -39,7 +57,7 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
     CanchaModule,
     DisponibilidadModule,
   ],
-  controllers: [],
-  providers: [],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
 export class CreateDeporteDto {
-  nombre_deporte: string;
+  nombre_deporte!: string;
   descripcion_deporte?: string;
 }

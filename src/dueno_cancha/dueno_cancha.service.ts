@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
 import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DuenoCancha } from './entities/dueno_cancha.entity';
 
 @Injectable()
 export class DuenoCanchaService {
+  constructor(
+    @InjectRepository(DuenoCancha)
+    private duenoCanchaRepository: Repository<DuenoCancha>,
+  ) {}
+
   create(createDuenoCanchaDto: CreateDuenoCanchaDto) {
-    return 'This action adds a new duenoCancha';
+    const duenoCancha = this.duenoCanchaRepository.create(createDuenoCanchaDto);
+    return this.duenoCanchaRepository.save(duenoCancha);2
   }
 
   findAll() {
-    return `This action returns all duenoCancha`;
+    return this.duenoCanchaRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} duenoCancha`;
+    return this.duenoCanchaRepository.findOne({ where: { id_dueno: id } });
   }
 
   update(id: number, updateDuenoCanchaDto: UpdateDuenoCanchaDto) {
-    return `This action updates a #${id} duenoCancha`;
+    return this.duenoCanchaRepository.update({ id_dueno: id }, updateDuenoCanchaDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} duenoCancha`;
+    return this.duenoCanchaRepository.delete({ id_dueno: id });
   }
 }
