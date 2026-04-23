@@ -16,32 +16,32 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: 'localhost',
-        port: 3306,
-        username: configService.get<string>('DB_USER'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true
-      }),
-    }),
-    AdminModule,
-    ReservaModule,
-    UsuarioModule,
-    ClubModule,
-    PagoModule,
-    DuenoCanchaModule,
-    DeporteModule,
-    CanchaModule,
-    DisponibilidadModule,
-  ],
-  controllers: [],
-  providers: [],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: 'localhost',
+        port: 3306,
+        username: configService.get<string>('DB_USER'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_NAME'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: true
+      }),
+    }),
+    AdminModule,
+    ReservaModule,
+    UsuarioModule,
+    ClubModule,
+    PagoModule,
+    DuenoCanchaModule,
+    DeporteModule,
+    CanchaModule,
+    DisponibilidadModule,
+  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule { }
