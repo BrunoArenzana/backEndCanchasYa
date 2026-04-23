@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCanchaDto } from './dto/create-cancha.dto';
 import { UpdateCanchaDto } from './dto/update-cancha.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Cancha } from './entities/cancha.entity';
 
 @Injectable()
 export class CanchaService {
+
+  constructor(
+    @InjectRepository(Cancha)
+    private canchaRepository: Repository<Cancha>,
+  ) {}
+
   create(createCanchaDto: CreateCanchaDto) {
-    return 'This action adds a new cancha';
+    const cancha = this.canchaRepository.create(createCanchaDto);
+    return this.canchaRepository.save(cancha);
   }
 
   findAll() {
-    return `This action returns all cancha`;
+    return this.canchaRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} cancha`;
+    return this.canchaRepository.findOne({ where: { id_cancha: id } });
   }
 
   update(id: number, updateCanchaDto: UpdateCanchaDto) {
-    return `This action updates a #${id} cancha`;
+    return this.canchaRepository.update(id, updateCanchaDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} cancha`;
+    return this.canchaRepository.delete(id);
   }
 }

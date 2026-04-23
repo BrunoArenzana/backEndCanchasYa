@@ -6,19 +6,19 @@ import { Pago } from '../../pago/entities/pago.entity';
 @Entity('reserva')
 export class Reserva {
   @PrimaryGeneratedColumn({ name: 'id_reserva' })
-  id_reserva: number;
+  id_reserva!: number;
 
   @Column({ name: 'fecha', type: 'date' })
-  fecha: Date;
+  fecha!: Date;
 
   @Column({ name: 'hora_inicio', type: 'time' })
-  hora_inicio: string;
+  hora_inicio!: string;
 
   @Column({ name: 'hora_fin', type: 'time' })
-  hora_fin: string;
+  hora_fin!: string;
 
   @Column({ name: 'monto_total', type: 'decimal', precision: 10, scale: 2 })
-  monto_total: number;
+  monto_total!: number;
 
   @Column({ 
     name: 'estado', 
@@ -26,19 +26,19 @@ export class Reserva {
     enum: ['pendiente', 'confirmada', 'cancelada', 'completada'],
     default: 'pendiente'
   })
-  estado: string;
+  estado!: string;
 
   @ManyToOne(() => Usuario, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
-  usuario: Usuario;
+  usuario!: Usuario;
 
   @ManyToOne(() => Cancha, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_cancha' })
-  cancha: Cancha;
+  cancha!: Cancha;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
-  created_at: Date;
+  created_at!: Date;
 
   @OneToMany(() => Pago, (pago) => pago.reserva)
-  pagos: Pago[];
+  pagos!: Pago[];
 }

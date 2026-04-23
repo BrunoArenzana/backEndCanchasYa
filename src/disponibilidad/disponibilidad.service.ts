@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDisponibilidadDto } from './dto/create-disponibilidad.dto';
 import { UpdateDisponibilidadDto } from './dto/update-disponibilidad.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Disponibilidad } from './entities/disponibilidad.entity';
 
 @Injectable()
 export class DisponibilidadService {
+  constructor(
+    @InjectRepository(Disponibilidad)
+    private readonly disponibilidadRepository: Repository<Disponibilidad>,
+  ) {}
+
   create(createDisponibilidadDto: CreateDisponibilidadDto) {
-    return 'This action adds a new disponibilidad';
+    const disponibilidad = this.disponibilidadRepository.create(createDisponibilidadDto);
+    return this.disponibilidadRepository.save(disponibilidad);
   }
 
   findAll() {
-    return `This action returns all disponibilidad`;
+    return this.disponibilidadRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} disponibilidad`;
+    return this.disponibilidadRepository.findOneBy({ id_disponibilidad: id });
   }
 
   update(id: number, updateDisponibilidadDto: UpdateDisponibilidadDto) {
-    return `This action updates a #${id} disponibilidad`;
+    return this.disponibilidadRepository.update({ id_disponibilidad: id }, updateDisponibilidadDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} disponibilidad`;
+    return this.disponibilidadRepository.delete({ id_disponibilidad: id });
   }
 }

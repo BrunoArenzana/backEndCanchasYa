@@ -7,31 +7,31 @@ import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.ent
 @Entity('cancha')
 export class Cancha {
   @PrimaryGeneratedColumn({ name: 'id_cancha' })
-  id_cancha: number;
+  id_cancha!: number;
 
   @Column({ name: 'nombre_cancha', type: 'varchar', length: 100 })
-  nombre_cancha: string;
+  nombre_cancha!: string;
 
   @Column({ name: 'descripcion_cancha', type: 'text', nullable: true })
-  descripcion_cancha: string;
+  descripcion_cancha!: string;
 
   @Column({ name: 'precio_por_hora', type: 'decimal', precision: 10, scale: 2 })
-  precio_por_hora: number;
+  precio_por_hora!: number;
 
   @Column({ name: 'activa', type: 'tinyint', default: 1 })
-  activa: number;
+  activa!: number;
 
   @ManyToOne(() => Club, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_club' })
-  club: Club;
+  club!: Club;
 
   @ManyToOne(() => Deporte, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_deporte' })
-  deporte: Deporte;
+  deporte!: Deporte;
 
   @OneToMany(() => Reserva, (reserva) => reserva.cancha)
-  reservas: Reserva[];
+  reservas!: Reserva[];
 
   @OneToMany(() => Disponibilidad, (disponibilidad) => disponibilidad.cancha)
-  disponibilidades: Disponibilidad[];
+  disponibilidades!: Disponibilidad[];
 }
