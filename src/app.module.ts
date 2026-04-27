@@ -10,7 +10,8 @@ import { DuenoCanchaModule } from './dueno_cancha/dueno_cancha.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
-
+import * as fs from 'fs';
+import path from 'path/win32';
 
 
 
@@ -22,11 +23,16 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: 'localhost',
-        port: 3306,
+        host: 'serverless-us-west1.sysp0000.db2.skysql.com',
+        port: 4011,
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
+        ssl: {
+          rejectUnauthorized: true,
+          ca: fs.readFileSync('cert/ca.pem').toString(),
+         //fs.readFileSync(path.join(__dirname, 'certs', 'ca.pem'))
+        },
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true
       }),
