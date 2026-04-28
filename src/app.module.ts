@@ -34,7 +34,7 @@ import path from 'path/win32';
          //fs.readFileSync(path.join(__dirname, 'certs', 'ca.pem'))
         },
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true
+        synchronize: false
       }),
     }),
     AdminModule,
