@@ -23,18 +23,18 @@ import path from 'path/win32';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: 'serverless-us-west1.sysp0000.db2.skysql.com',
-        port: 4011,
+        host: 'localhost',
+        port: 3306,
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        ssl: {
-          rejectUnauthorized: true,
-          ca: fs.readFileSync('cert/ca.pem').toString(),
-         //fs.readFileSync(path.join(__dirname, 'certs', 'ca.pem'))
-        },
+        //ssl: {
+        //  rejectUnauthorized: true,
+        //  ca: fs.readFileSync('cert/ca.pem').toString(),
+        // //fs.readFileSync(path.join(__dirname, 'certs', 'ca.pem'))
+        //},
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false
+        synchronize: true
       }),
     }),
     AdminModule,
