@@ -11,6 +11,9 @@ export class Club {
   @Column({ name: 'nombre_club', type: 'varchar', length: 150 })
   nombre_club!: string;
 
+  @Column({ name: 'deportes_club', type: 'simple-json', nullable: true })
+deportes_club!: string[];
+
   @Column({ name: 'direccion_club', type: 'varchar', length: 255 })
   direccion_club!: string;
 

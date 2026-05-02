@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
 import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
 import { Repository, DataSource } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DuenoCancha } from './entities/dueno_cancha.entity';
 import { Club } from '../club/entities/club.entity';
-import { UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
 export class DuenoCanchaService {
@@ -19,29 +18,35 @@ export class DuenoCanchaService {
     private dataSource: DataSource,
   ) {}
 
-  // ✅ CRUD original (NO lo borres)
   create(createDuenoCanchaDto: CreateDuenoCanchaDto) {
     const dueno = this.duenoCanchaRepository.create(createDuenoCanchaDto);
     return this.duenoCanchaRepository.save(dueno);
   }
 
   findAll() {
-    return this.duenoCanchaRepository.find();
+    return this.duenoCanchaRepository.find({
+      relations: ['clubs'],
+    });
   }
 
   findOne(id: number) {
-    return this.duenoCanchaRepository.findOne({ where: { id_dueno: id } });
+    return this.duenoCanchaRepository.findOne({
+      where: { id_dueno: id },
+      relations: ['clubs'],
+    });
   }
 
   update(id: number, updateDuenoCanchaDto: UpdateDuenoCanchaDto) {
-    return this.duenoCanchaRepository.update({ id_dueno: id }, updateDuenoCanchaDto);
+    return this.duenoCanchaRepository.update(
+      { id_dueno: id },
+      updateDuenoCanchaDto,
+    );
   }
 
   remove(id: number) {
     return this.duenoCanchaRepository.delete({ id_dueno: id });
   }
 
-  // 🚀 MÉTODO NUEVO (el importante)
   async createDuenoWithClub(data: any) {
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -64,19 +69,19 @@ export class DuenoCanchaService {
         direccion_club: data.direccion || 'sin direccion',
         ciudad_club: data.ciudad,
         telefono_club: data.telefono,
+        deportes_club: data.canchas || [],
         dueno: savedDueno,
       });
 
-      await queryRunner.manager.save(club);
+      const savedClub = await queryRunner.manager.save(club);
 
       await queryRunner.commitTransaction();
 
       return {
         message: 'OK',
         dueno: savedDueno,
-        club,
+        club: savedClub,
       };
-
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
@@ -84,24 +89,29 @@ export class DuenoCanchaService {
       await queryRunner.release();
     }
   }
+
   async login(email: string, password: string) {
-  const dueno = await this.duenoCanchaRepository.findOne({
-    where: { email_dueno: email },
-  });
+    const dueno = await this.duenoCanchaRepository.findOne({
+      where: { email_dueno: email },
+      relations: ['clubs'],
+    });
 
-  if (!dueno || dueno.password_dueno !== password) {
-    throw new UnauthorizedException('Usuario o contraseña incorrectos');
+    if (!dueno || dueno.password_dueno !== password) {
+      throw new UnauthorizedException('Usuario o contraseña incorrectos');
+    }
+
+    const clubPrincipal = dueno.clubs?.[0] || null;
+
+    return {
+      message: 'Login exitoso',
+      user: {
+        id_dueno: dueno.id_dueno,
+        nombre: dueno.nombre_dueno,
+        apellido: dueno.apellido_dueno,
+        email: dueno.email_dueno,
+        tipo: 'club',
+        club: clubPrincipal,
+      },
+    };
   }
-
-  return {
-    message: 'Login exitoso',
-    user: {
-      id_dueno: dueno.id_dueno,
-      nombre: dueno.nombre_dueno,
-      apellido: dueno.apellido_dueno,
-      email: dueno.email_dueno,
-      tipo: 'club',
-    },
-  };
-}
 }
