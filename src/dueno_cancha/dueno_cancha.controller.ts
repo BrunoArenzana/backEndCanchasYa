@@ -12,6 +12,16 @@ export class DuenoCanchaController {
     return this.duenoCanchaService.create(createDuenoCanchaDto);
   }
 
+    @Post('register')
+createWithClub(@Body() body: any) {
+  return this.duenoCanchaService.createDuenoWithClub(body);
+}
+
+@Post('login')
+login(@Body() body: { email: string; password: string }) {
+  return this.duenoCanchaService.login(body.email, body.password);
+}
+
   @Get()
   findAll() {
     return this.duenoCanchaService.findAll();
