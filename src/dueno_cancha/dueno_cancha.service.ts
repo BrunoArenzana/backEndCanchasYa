@@ -1,10 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
 import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
 import { Repository, DataSource } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DuenoCancha } from './entities/dueno_cancha.entity';
 import { Club } from '../club/entities/club.entity';
+import { Cancha } from '../cancha/entities/cancha.entity';
+import { Deporte } from '../deporte/entities/deporte.entity';
 
 @Injectable()
 export class DuenoCanchaService {
@@ -54,6 +56,8 @@ export class DuenoCanchaService {
     await queryRunner.startTransaction();
 
     try {
+      const deportesSeleccionados: string[] = data.canchas || [];
+
       const dueno = queryRunner.manager.create(DuenoCancha, {
         nombre_dueno: data.nombre,
         apellido_dueno: data.apellido,
@@ -69,16 +73,39 @@ export class DuenoCanchaService {
         direccion_club: data.direccion || 'sin direccion',
         ciudad_club: data.ciudad,
         telefono_club: data.telefono,
-        deportes_club: data.canchas || [],
+        deportes_club: deportesSeleccionados,
         dueno: savedDueno,
       });
 
       const savedClub = await queryRunner.manager.save(club);
 
+      for (const nombreDeporte of deportesSeleccionados) {
+        const deporte = await queryRunner.manager.findOne(Deporte, {
+          where: { nombre_deporte: nombreDeporte },
+        });
+
+        if (!deporte) {
+          throw new BadRequestException(
+            `El deporte "${nombreDeporte}" no existe en la base de datos`,
+          );
+        }
+
+        const cancha = queryRunner.manager.create(Cancha, {
+          nombre_cancha: `Cancha ${nombreDeporte}`,
+          descripcion_cancha: `Cancha de ${nombreDeporte} del club ${savedClub.nombre_club}`,
+          precio_por_hora: 0,
+          activa: 1,
+          club: savedClub,
+          deporte,
+        });
+
+        await queryRunner.manager.save(cancha);
+      }
+
       await queryRunner.commitTransaction();
 
       return {
-        message: 'OK',
+        message: 'Dueño, club y canchas creados correctamente',
         dueno: savedDueno,
         club: savedClub,
       };

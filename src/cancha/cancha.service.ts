@@ -7,7 +7,6 @@ import { Cancha } from './entities/cancha.entity';
 
 @Injectable()
 export class CanchaService {
-
   constructor(
     @InjectRepository(Cancha)
     private canchaRepository: Repository<Cancha>,
@@ -19,18 +18,36 @@ export class CanchaService {
   }
 
   findAll() {
-    return this.canchaRepository.find();
+    return this.canchaRepository.find({
+      relations: ['club', 'deporte'],
+      where: { activa: 1 },
+    });
   }
 
   findOne(id: number) {
-    return this.canchaRepository.findOne({ where: { id_cancha: id } });
+    return this.canchaRepository.findOne({
+      where: { id_cancha: id },
+      relations: ['club', 'deporte'],
+    });
+  }
+
+  findByClub(idClub: number) {
+    return this.canchaRepository.find({
+      where: {
+        club: {
+          id_club: idClub,
+        },
+        activa: 1,
+      },
+      relations: ['club', 'deporte'],
+    });
   }
 
   update(id: number, updateCanchaDto: UpdateCanchaDto) {
-    return this.canchaRepository.update(id, updateCanchaDto);
+    return this.canchaRepository.update({ id_cancha: id }, updateCanchaDto);
   }
 
   remove(id: number) {
-    return this.canchaRepository.delete(id);
+    return this.canchaRepository.delete({ id_cancha: id });
   }
 }
