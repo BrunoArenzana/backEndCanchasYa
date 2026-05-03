@@ -14,6 +14,7 @@ export class ClubService {
 
   create(createClubDto: CreateClubDto) {
     const club = this.clubRepository.create(createClubDto);
+    
     return this.clubRepository.save(club);
   }
 
@@ -24,7 +25,9 @@ export class ClubService {
   findOne(id: number) {
     return this.clubRepository.findOneBy({ id_club: id });
   }
-
+findByDueno(id_dueno: number) {
+    return this.clubRepository.find({ where: { dueno: { id_dueno: id_dueno } } });
+  }
   update(id: number, updateClubDto: UpdateClubDto) {
     return this.clubRepository.update(id, updateClubDto);
   }

@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany } from 'typeorm';
 import { DuenoCancha } from '../../dueno_cancha/entities/dueno_cancha.entity';
 import { Admin } from '../../admin/entities/admin.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
+
 
 @Entity('club')
 export class Club {
@@ -22,6 +23,11 @@ export class Club {
 
   @Column({ name: 'descripcion_club', type: 'text', nullable: true })
   descripcion_club!: string;
+
+
+  
+  @Column({ name: 'logo_club', type: 'text', nullable: true })
+  logo_club!: string;
 
   @Column({ 
     name: 'estado', 
@@ -44,5 +50,6 @@ export class Club {
 
   @OneToMany(() => Cancha, (cancha) => cancha.club)
   canchas!: Cancha[];
-  
+  @ManyToMany(() => DuenoCancha, { onDelete: 'CASCADE' })
+  duenos!: DuenoCancha[];
 }
