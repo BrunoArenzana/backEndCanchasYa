@@ -49,14 +49,16 @@ export class DuenoCanchaService {
     return this.duenoCanchaRepository.delete({ id_dueno: id });
   }
 
-  async createDuenoWithClub(data: any) {
+  async createDuenoWithClub(data: any, file?: any) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const deportesSeleccionados: string[] = data.canchas || [];
+      const deportesSeleccionados: string[] = data.canchas
+        ? JSON.parse(data.canchas)
+        : [];
 
       const dueno = queryRunner.manager.create(DuenoCancha, {
         nombre_dueno: data.nombre,
@@ -74,6 +76,7 @@ export class DuenoCanchaService {
         ciudad_club: data.ciudad,
         telefono_club: data.telefono,
         deportes_club: deportesSeleccionados,
+        logo_club: file ? `/uploads/${file.filename}` : undefined,
         dueno: savedDueno,
       });
 
