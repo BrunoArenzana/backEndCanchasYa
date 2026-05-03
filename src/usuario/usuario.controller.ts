@@ -12,6 +12,11 @@ export class UsuarioController {
     return this.usuarioService.create(createUsuarioDto);
   }
 
+  @Post('login')
+  login(@Body() body: { email: string; password: string }) {
+    return this.usuarioService.login(body.email, body.password);
+  }
+
   @Get()
   findAll() {
     return this.usuarioService.findAll();
