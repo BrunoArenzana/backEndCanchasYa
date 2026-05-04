@@ -12,6 +12,12 @@ export class Club {
   @Column({ name: 'nombre_club', type: 'varchar', length: 150 })
   nombre_club!: string;
 
+  @Column({ name: 'deportes_club', type: 'simple-json', nullable: true })
+  deportes_club!: string[];
+
+  @Column({ name: 'logo_club', type: 'varchar', length: 255, nullable: true })
+  logo_club!: string;
+
   @Column({ name: 'direccion_club', type: 'varchar', length: 255 })
   direccion_club!: string;
 
@@ -24,13 +30,8 @@ export class Club {
   @Column({ name: 'descripcion_club', type: 'text', nullable: true })
   descripcion_club!: string;
 
-
-  
-  @Column({ name: 'logo_club', type: 'text', nullable: true })
-  logo_club!: string;
-
-  @Column({ 
-    name: 'estado', 
+  @Column({
+    name: 'estado',
     type: 'enum',
     enum: ['activo', 'inactivo', 'pendiente_aprobacion'],
     default: 'pendiente_aprobacion'
@@ -50,6 +51,5 @@ export class Club {
 
   @OneToMany(() => Cancha, (cancha) => cancha.club)
   canchas!: Cancha[];
-  @ManyToMany(() => DuenoCancha, { onDelete: 'CASCADE' })
-  duenos!: DuenoCancha[];
+
 }

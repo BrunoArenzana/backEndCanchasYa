@@ -6,13 +6,20 @@ import { get } from 'http';
 
 @Controller('club')
 export class ClubController {
-  constructor(private readonly clubService: ClubService) {}
+  constructor(private readonly clubService: ClubService) { }
 
   @Post()
   create(@Body() createClubDto: CreateClubDto) {
     return this.clubService.create(createClubDto);
   }
 
+  @Post('dueno/:idDueno')
+  createForOwner(
+    @Param('idDueno') idDueno: string,
+    @Body() body: any
+  ) {
+    return this.clubService.createForOwner(+idDueno, body);
+  }
 
   @Get()
   findAll() {
