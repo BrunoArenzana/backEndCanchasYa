@@ -38,7 +38,7 @@ export class DuenoCanchaController {
       }),
     }),
   )
-  createWithClub(@Body() body: any, @UploadedFile() file: Express.Multer.File) {
+  createWithClub(@Body() body: any, @UploadedFile() file: any) {
     return this.duenoCanchaService.createDuenoWithClub(body, file);
   }
 
