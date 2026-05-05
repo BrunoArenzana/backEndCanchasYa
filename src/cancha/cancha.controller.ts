@@ -5,12 +5,7 @@ import { UpdateCanchaDto } from './dto/update-cancha.dto';
 
 @Controller('cancha')
 export class CanchaController {
-  constructor(private readonly canchaService: CanchaService) {}
-
-  @Post()
-  create(@Body() createCanchaDto: CreateCanchaDto) {
-    return this.canchaService.create(createCanchaDto);
-  }
+  constructor(private readonly canchaService: CanchaService) { }
 
   @Get()
   findAll() {
@@ -27,6 +22,11 @@ export class CanchaController {
     return this.canchaService.findOne(+id);
   }
 
+  @Post()
+  create(@Body() createCanchaDto: CreateCanchaDto) {
+    return this.canchaService.create(createCanchaDto);
+  }
+  
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCanchaDto: UpdateCanchaDto) {
     return this.canchaService.update(+id, updateCanchaDto);

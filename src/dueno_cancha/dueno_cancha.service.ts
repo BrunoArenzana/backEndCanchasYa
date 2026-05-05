@@ -56,10 +56,23 @@ export class DuenoCanchaService {
     await queryRunner.startTransaction();
 
     try {
-      const deportesSeleccionados: string[] = data.canchas
-        ? JSON.parse(data.canchas)
-        : [];
+      console.log('Datos recibidos:', data);
+      console.log('Archivo recibido:', file);
 
+      // Parsear canchas seleccionadas
+      let deportesSeleccionados: string[] = [];
+      if (data.canchas) {
+        try {
+          deportesSeleccionados = typeof data.canchas === 'string' 
+            ? JSON.parse(data.canchas) 
+            : data.canchas;
+        } catch (e) {
+          console.warn('No se pudieron parsear canchas:', e);
+          deportesSeleccionados = [];
+        }
+      }
+
+      // Crear DuenoCancha
       const dueno = queryRunner.manager.create(DuenoCancha, {
         nombre_dueno: data.nombre,
         apellido_dueno: data.apellido,
@@ -69,52 +82,66 @@ export class DuenoCanchaService {
       });
 
       const savedDueno = await queryRunner.manager.save(dueno);
+      console.log('Dueño creado:', savedDueno.id_dueno);
 
+      // Crear Club
       const club = queryRunner.manager.create(Club, {
         nombre_club: data.razonSocial,
-        direccion_club: data.direccion || 'sin direccion',
+        direccion_club: data.direccion || data.ciudad || 'sin dirección especificada',
         ciudad_club: data.ciudad,
         telefono_club: data.telefono,
-        deportes_club: deportesSeleccionados,
         logo_club: file ? `/uploads/${file.filename}` : undefined,
+        deportes_club: deportesSeleccionados,
         dueno: savedDueno,
+        estado: 'pendiente_aprobacion',
       });
 
       const savedClub = await queryRunner.manager.save(club);
+      console.log('Club creado:', savedClub.id_club);
 
-      for (const nombreDeporte of deportesSeleccionados) {
-        const deporte = await queryRunner.manager.findOne(Deporte, {
-          where: { nombre_deporte: nombreDeporte },
-        });
+      // Crear canchas para cada deporte seleccionado
+      if (deportesSeleccionados.length > 0) {
+        for (const nombreDeporte of deportesSeleccionados) {
+          const deporte = await queryRunner.manager.findOne(Deporte, {
+            where: { nombre_deporte: nombreDeporte },
+          });
 
-        if (!deporte) {
-          throw new BadRequestException(
-            `El deporte "${nombreDeporte}" no existe en la base de datos`,
-          );
+          if (!deporte) {
+            console.warn(`Deporte "${nombreDeporte}" no encontrado, creando genérico...`);
+            // No lanzar error, simplemente crear una cancha genérica
+            const cancha = queryRunner.manager.create(Cancha, {
+              nombre_cancha: `${nombreDeporte}`,
+              descripcion_cancha: `Cancha de ${nombreDeporte} del club ${savedClub.nombre_club}`,
+              precio_por_hora: 0,
+              club: savedClub,
+            });
+            await queryRunner.manager.save(cancha);
+          } else {
+            const cancha = queryRunner.manager.create(Cancha, {
+              nombre_cancha: `${nombreDeporte}`,
+              descripcion_cancha: `Cancha de ${nombreDeporte} del club ${savedClub.nombre_club}`,
+              precio_por_hora: 0,
+              club: savedClub,
+              deporte,
+            });
+            await queryRunner.manager.save(cancha);
+          }
         }
-
-        const cancha = queryRunner.manager.create(Cancha, {
-          nombre_cancha: `Cancha ${nombreDeporte}`,
-          descripcion_cancha: `Cancha de ${nombreDeporte} del club ${savedClub.nombre_club}`,
-          precio_por_hora: 0,
-          activa: 1,
-          club: savedClub,
-          deporte,
-        });
-
-        await queryRunner.manager.save(cancha);
       }
 
       await queryRunner.commitTransaction();
 
       return {
-        message: 'Dueño, club y canchas creados correctamente',
+        message: 'Dueño y club creados correctamente. Espera la aprobación del administrador.',
         dueno: savedDueno,
         club: savedClub,
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      throw error;
+      console.error('Error en createDuenoWithClub:', error);
+      throw new BadRequestException(
+        `Error al registrar: ${'Error desconocido'}`
+      );
     } finally {
       await queryRunner.release();
     }
@@ -135,6 +162,7 @@ export class DuenoCanchaService {
     return {
       message: 'Login exitoso',
       user: {
+        id_club: dueno.clubs?.[0]?.id_club || null,
         id_dueno: dueno.id_dueno,
         nombre: dueno.nombre_dueno,
         apellido: dueno.apellido_dueno,
