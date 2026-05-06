@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany } from 'typeorm';
 import { DuenoCancha } from '../../dueno_cancha/entities/dueno_cancha.entity';
 import { Admin } from '../../admin/entities/admin.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
+
 
 @Entity('club')
 export class Club {
