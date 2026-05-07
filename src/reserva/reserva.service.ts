@@ -12,12 +12,26 @@ export class ReservaService {
     private readonly reservaRepository: Repository<Reserva>,
   ) {}
 
-  create(createReservaDto: CreateReservaDto) {
-    return this.reservaRepository.save(createReservaDto);
+  create(createReservaDto: any) {
+    const nuevaReserva = this.reservaRepository.create({
+      ...createReservaDto,
+      usuario: { id_usuario: createReservaDto.id_usuario },
+      cancha: { id_cancha: createReservaDto.id_cancha },
+    });
+    return this.reservaRepository.save(nuevaReserva);
   }
 
   findAll() {
-    return this.reservaRepository.find();
+    return this.reservaRepository.find({
+      relations: ['cancha', 'cancha.club', 'cancha.deporte'],
+    });
+  }
+
+  findByUsuario(id_usuario: number) {
+    return this.reservaRepository.find({
+      where: { usuario: { id_usuario: id_usuario } },
+      relations: ['cancha', 'cancha.club', 'cancha.deporte'],
+    });
   }
 
   findOne(id: number) {

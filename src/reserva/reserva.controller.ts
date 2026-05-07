@@ -17,6 +17,11 @@ export class ReservaController {
     return this.reservaService.findAll();
   }
 
+  @Get('usuario/:id')
+  findByUsuario(@Param('id') id: string) {
+    return this.reservaService.findByUsuario(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reservaService.findOne(+id);

@@ -172,4 +172,92 @@ export class DuenoCanchaService {
       },
     };
   }
+
+  async getPendientes() {
+    const clubes = await this.clubRepository.find({
+      where: { estado: 'pendiente_aprobacion' },
+      relations: ['dueno'],
+    });
+
+    return clubes.map(club => ({
+      id: club.id_club,
+      nombre: club.nombre_club,
+      email: club.dueno ? club.dueno.email_dueno : null,
+      telefono: club.telefono_club,
+      canchas: club.deportes_club || [],
+      direccion: club.direccion_club,
+      activo: club.estado === 'activo',
+    }));
+  }
+
+  async getAceptados() {
+    const clubes = await this.clubRepository.find({
+      where: [
+        { estado: 'activo' },
+        { estado: 'inactivo' }
+      ],
+      relations: ['dueno', 'canchas', 'canchas.deporte'],
+    });
+
+    return clubes.map(club => ({
+      id: club.id_club,
+      nombre: club.nombre_club,
+      email: club.dueno ? club.dueno.email_dueno : null,
+      telefono: club.telefono_club,
+      canchas: club.deportes_club || [],
+      detallesCanchas: club.canchas?.map(c => ({
+        id: c.id_cancha,
+        nombre: c.nombre_cancha,
+        precio: c.precio_por_hora,
+        deporte: c.deporte?.nombre_deporte
+      })) || [],
+      direccion: club.direccion_club,
+      activo: club.estado === 'activo',
+    }));
+  }
+
+  async aceptarClub(id: number) {
+    const club = await this.clubRepository.findOne({ where: { id_club: id }, relations: ['dueno'] });
+    if (!club) throw new BadRequestException('Club no encontrado');
+    
+    club.estado = 'activo';
+    await this.clubRepository.save(club);
+
+    if (club.dueno) {
+      club.dueno.estado_dueno = 'activo';
+      await this.duenoCanchaRepository.save(club.dueno);
+    }
+    return { success: true, message: 'Club aceptado' };
+  }
+
+  async rechazarClub(id: number) {
+    const club = await this.clubRepository.findOne({ where: { id_club: id }, relations: ['dueno'] });
+    if (!club) throw new BadRequestException('Club no encontrado');
+    
+    await this.clubRepository.delete(id);
+    
+    // Si el dueño se queda sin clubes, lo borramos también
+    if (club.dueno) {
+      const remainingClubs = await this.clubRepository.count({ where: { dueno: { id_dueno: club.dueno.id_dueno } } });
+      if (remainingClubs === 0) {
+        await this.duenoCanchaRepository.delete(club.dueno.id_dueno);
+      }
+    }
+    
+    return { success: true, message: 'Club y dueño rechazados' };
+  }
+
+  async toggleStatus(id: number, activo: boolean) {
+    const club = await this.clubRepository.findOne({ where: { id_club: id }, relations: ['dueno'] });
+    if (!club) throw new BadRequestException('Club no encontrado');
+
+    club.estado = activo ? 'activo' : 'inactivo';
+    await this.clubRepository.save(club);
+
+    if (club.dueno) {
+      club.dueno.estado_dueno = activo ? 'activo' : 'inactivo';
+      await this.duenoCanchaRepository.save(club.dueno);
+    }
+    return { success: true, message: 'Estado actualizado', activo };
+  }
 }
