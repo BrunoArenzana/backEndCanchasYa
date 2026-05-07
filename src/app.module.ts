@@ -10,6 +10,7 @@ import { DuenoCanchaModule } from './dueno_cancha/dueno_cancha.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
+import { AuthModule } from './auth/auth.module';
 import * as fs from 'fs';
 import path from 'path/win32';
 
@@ -46,6 +47,7 @@ import path from 'path/win32';
     DeporteModule,
     CanchaModule,
     DisponibilidadModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

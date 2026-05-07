@@ -4,7 +4,7 @@ export class CreateUsuarioDto {
   email_usuario!: string;
   password_usuario!: string;
   telefono_usuario!: string;
-  DNI_usuario!: string;
+  dni_usuario!: string;
   ciudad_usuario!: string;
   provincia_usuario!: string;
   cp_usuario!: string;
