@@ -10,15 +10,14 @@ import { DuenoCanchaModule } from './dueno_cancha/dueno_cancha.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ReviewPayCron } from './cron/reviewPay.cron';
 import * as fs from 'fs';
-import path from 'path/win32';
-
-
-
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -28,11 +27,6 @@ import path from 'path/win32';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        //ssl: {
-        //  rejectUnauthorized: true,
-        //  ca: fs.readFileSync('cert/ca.pem').toString(),
-        // //fs.readFileSync(path.join(__dirname, 'certs', 'ca.pem'))
-        //},
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
         logging: true
@@ -49,6 +43,6 @@ import path from 'path/win32';
     DisponibilidadModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ReviewPayCron],
 })
 export class AppModule { }
