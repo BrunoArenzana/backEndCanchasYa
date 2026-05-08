@@ -22,6 +22,11 @@ export class ReservaController {
     return this.reservaService.findByUsuario(+id);
   }
 
+  @Get('club/:id')
+  findByClub(@Param('id') id: string) {
+    return this.reservaService.findByClub(+id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reservaService.findOne(+id);

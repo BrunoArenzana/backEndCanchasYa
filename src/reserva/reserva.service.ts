@@ -34,6 +34,13 @@ export class ReservaService {
     });
   }
 
+  findByClub(id_club: number) {
+    return this.reservaRepository.find({
+      where: { cancha: { club: { id_club: id_club } } },
+      relations: ['cancha', 'cancha.club', 'cancha.deporte'],
+    });
+  }
+
   findOne(id: number) {
     return this.reservaRepository.findOneBy({ id_reserva: id });
   }
