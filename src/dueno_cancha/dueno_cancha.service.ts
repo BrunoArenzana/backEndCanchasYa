@@ -174,47 +174,56 @@ export class DuenoCanchaService {
   }
 
   async getPendientes() {
-    const clubes = await this.clubRepository.find({
-      where: { estado: 'pendiente_aprobacion' },
-      relations: ['dueno'],
-    });
+  const clubes = await this.clubRepository.find({
+    where: { estado: 'pendiente_aprobacion' },
+    relations: ['dueno'],
+  });
 
-    return clubes.map(club => ({
-      id: club.id_club,
-      nombre: club.nombre_club,
-      email: club.dueno ? club.dueno.email_dueno : null,
-      telefono: club.telefono_club,
-      canchas: club.deportes_club || [],
-      direccion: club.direccion_club,
-      activo: club.estado === 'activo',
-    }));
-  }
+  return clubes.map(club => ({
+    id: club.id_club,
+    nombre: club.nombre_club,
+    email: club.dueno ? club.dueno.email_dueno : null,
+    telefono: club.telefono_club,
+    canchas: club.deportes_club || [],
+    direccion: club.direccion_club,
+
+    // Logo cargado por el dueño al registrarse.
+    logo: club.logo_club || null,
+
+    activo: club.estado === 'activo',
+  }));
+}
 
   async getAceptados() {
-    const clubes = await this.clubRepository.find({
-      where: [
-        { estado: 'activo' },
-        { estado: 'inactivo' }
-      ],
-      relations: ['dueno', 'canchas', 'canchas.deporte'],
-    });
+  const clubes = await this.clubRepository.find({
+    where: [
+      { estado: 'activo' },
+      { estado: 'inactivo' }
+    ],
+    relations: ['dueno', 'canchas', 'canchas.deporte'],
+  });
 
-    return clubes.map(club => ({
-      id: club.id_club,
-      nombre: club.nombre_club,
-      email: club.dueno ? club.dueno.email_dueno : null,
-      telefono: club.telefono_club,
-      canchas: club.deportes_club || [],
-      detallesCanchas: club.canchas?.map(c => ({
-        id: c.id_cancha,
-        nombre: c.nombre_cancha,
-        precio: c.precio_por_hora,
-        deporte: c.deporte?.nombre_deporte
-      })) || [],
-      direccion: club.direccion_club,
-      activo: club.estado === 'activo',
-    }));
-  }
+  return clubes.map(club => ({
+    id: club.id_club,
+    nombre: club.nombre_club,
+    email: club.dueno ? club.dueno.email_dueno : null,
+    telefono: club.telefono_club,
+    canchas: club.deportes_club || [],
+    detallesCanchas: club.canchas?.map(c => ({
+      id: c.id_cancha,
+      nombre: c.nombre_cancha,
+      precio: c.precio_por_hora,
+      deporte: c.deporte?.nombre_deporte
+    })) || [],
+    direccion: club.direccion_club,
+
+    // IMPORTANTE:
+    // Este campo es el que necesita el front para renderizar la imagen.
+    logo: club.logo_club || null,
+
+    activo: club.estado === 'activo',
+  }));
+}
 
   async aceptarClub(id: number) {
     const club = await this.clubRepository.findOne({ where: { id_club: id }, relations: ['dueno'] });
