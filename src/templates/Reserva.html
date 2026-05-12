@@ -1,0 +1,96 @@
+html: `
+  <div style="
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 40px;
+  ">
+
+    <div style="
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      padding: 40px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    ">
+
+      <h1 style="
+        color: #16a34a;
+        text-align: center;
+      ">
+        ¡Reserva confirmada! ⚽
+      </h1>
+
+      <p style="
+        font-size: 16px;
+        color: #444;
+        line-height: 1.6;
+      ">
+        Hola <b>${data.nombre}</b>, tu reserva fue realizada correctamente en CanchasYa.
+      </p>
+
+      <div style="
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+      ">
+
+        <p style="margin: 10px 0; font-size:16px;">
+          <b>📅 Fecha:</b> ${data.fecha}
+        </p>
+
+        <p style="margin: 10px 0; font-size:16px;">
+          <b>⏰ Horario:</b> ${data.horario}
+        </p>
+
+        <p style="margin: 10px 0; font-size:16px;">
+          <b>🏟️ Cancha:</b> ${data.cancha}
+        </p>
+
+        <p style="margin: 10px 0; font-size:16px;">
+          <b>📍 Complejo:</b> ${data.complejo}
+        </p>
+
+      </div>
+
+      <p style="
+        font-size: 16px;
+        color: #444;
+        line-height: 1.6;
+        margin-top: 30px;
+      ">
+        Te esperamos para disfrutar tu partido.  
+        Recordá presentarte unos minutos antes del horario reservado.
+      </p>
+
+      <div style="text-align:center; margin-top:40px;">
+        <a
+          href="http://localhost:5173/mis-reservas"
+          style="
+            background:#16a34a;
+            color:white;
+            padding:14px 24px;
+            border-radius:8px;
+            text-decoration:none;
+            display:inline-block;
+            font-weight:bold;
+          "
+        >
+          Ver mis reservas
+        </a>
+      </div>
+
+      <hr style="margin:40px 0;" />
+
+      <p style="
+        font-size: 12px;
+        color: #999;
+        text-align:center;
+      ">
+        Este email fue enviado automáticamente por CanchasYa.
+      </p>
+
+    </div>
+  </div>
+`

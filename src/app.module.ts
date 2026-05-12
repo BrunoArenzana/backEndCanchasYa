@@ -19,6 +19,8 @@ import { DuenoCancha } from './dueno_cancha/entities/dueno_cancha.entity';
 import { Deporte } from './deporte/entities/deporte.entity';
 import { Cancha } from './cancha/entities/cancha.entity';
 import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
 
 
 @Module({
@@ -36,6 +38,24 @@ import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity'
                 entities: [__dirname + '/**/*.entity{.ts,.js}'],
                 synchronize: true,
             }),
+
+        }),
+        MailerModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => ({
+                transport: {
+                    host: config.get('MAIL_HOST'),
+                    port: Number(config.get('MAIL_PORT')),
+                    secure: false,
+                    auth: {
+                        user: config.get('MAIL_USER'),
+                        pass: config.get('MAIL_PASS'),
+                    },
+                },
+                defaults: {
+                    from: config.get('MAIL_FROM'),
+                },
+            }),
         }),
         AdminModule,
         ReservaModule,
@@ -46,6 +66,7 @@ import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity'
         DeporteModule,
         CanchaModule,
         DisponibilidadModule,
+        MailModule,
     ],
     controllers: [],
     providers: [],
