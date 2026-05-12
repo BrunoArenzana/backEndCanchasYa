@@ -39,4 +39,6 @@ export class DuenoCancha {
 
   @OneToMany(() => Club, (club) => club.dueno)
   clubs!: Club[];
+
+  
 }
