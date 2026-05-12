@@ -5,15 +5,16 @@ import { DuenoCanchaModule } from '../dueno_cancha/dueno_cancha.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants/jwt.constant';
 import { UsuarioModule } from 'src/usuario/usuario.module';
+import { AdminModule } from 'src/admin/admin.module';
 
 // import { UsuarioModule } from '../usuario/usuario.module';
 
 @Module({
   imports: [
-    DuenoCanchaModule,UsuarioModule,     JwtModule.register({
+    DuenoCanchaModule,UsuarioModule,AdminModule,     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },//tiempo de exp, el del curso le puso 1 dia "1d"
+      signOptions: { expiresIn: '1d' },//tiempo de exp del token, modificarlo se según lo que necesiten, 60s es solo para pruebas
     }),
     // UsuarioModule 
   ],

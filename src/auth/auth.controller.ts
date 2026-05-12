@@ -1,13 +1,15 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Body, UseInterceptors, UploadedFile, Get, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
+import { AuthGuard } from './guard/auth.guard';
+import { Request } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
 
-  
+
   // RUTAS PARA USUARIOS NORMALES (Jugadores)
 
   @Post('usuario/register')
@@ -41,4 +43,19 @@ export class AuthController {
     // Recibe email y password del dueño
     return this.authService.loginDuenoCancha(loginData);
   }
+  // RUTA PROTEGIDA DE EJEMPLO, ES UN EJEMPLO DE CÓMO USAR EL GUARD PARA PROTEGER RUTAS QUE REQUIERAN AUTENTICACIÓN
+  @Get('profile')
+  @UseGuards(AuthGuard) // Protegemos esta ruta con el guard de autenticación
+  profile(
+    @Request()
+    req,
+  ) {
+    return req.user; // Aquí podrías retornar el perfil del usuario autenticado, que el guard ha adjuntado al request
+    // Lógica para obtener el perfil del usuario
+  }
+//ruta admin
+@Post('admin/login')
+loginAdmin(@Body() loginData: any) {
+  return this.authService.loginAdmin(loginData);
+}
 }

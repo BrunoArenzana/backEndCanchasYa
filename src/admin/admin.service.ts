@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Admin } from './entities/admin.entity';
@@ -33,4 +33,27 @@ export class AdminService {
   remove(id: number) {
     return this.adminRepository.delete(id);
   }
+
+
+// ... resto de imports igual
+
+async login(email: string, password: string) {
+  const admin = await this.adminRepository.findOne({
+    where: { email_admin: email },
+  });
+
+  if (!admin || admin.password_hash !== password) {
+    throw new UnauthorizedException('Usuario o contraseña incorrectos');
+  }
+
+  return {
+    message: 'Login exitoso',
+    user: {
+      id_admin: admin.id_admin,
+      nombre: admin.nombre_admin,
+      email: admin.email_admin,
+      tipo: 'admin',
+    },
+  };
+}
 }

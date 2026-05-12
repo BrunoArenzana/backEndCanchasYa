@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DuenoCanchaService } from '../dueno_cancha/dueno_cancha.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsuarioService } from 'src/usuario/usuario.service';
+import { AdminService } from 'src/admin/admin.service';
 
 // import { UsuarioService } from '../usuario/usuario.service'; // Descomentar cuando lo integr
 @Injectable()
@@ -9,9 +10,10 @@ export class AuthService {
   constructor(
     private readonly duenoCanchaService: DuenoCanchaService,
     private readonly jwtService: JwtService, // Para generar tokens JWT 
-    private readonly usuarioService: UsuarioService
+    private readonly usuarioService: UsuarioService,
+    private readonly adminService: AdminService
   ) {}
-
+//usuario
   async registerUsuario(dto: any) {
     return this.usuarioService.create(dto);
   }
@@ -31,7 +33,7 @@ export class AuthService {
     token,
   };
 }
-
+//dueno cancha
   async registerDuenoCancha(dto: any, file?: any) {
     return this.duenoCanchaService.createDuenoWithClub(dto, file);
   }
@@ -43,6 +45,22 @@ async loginDuenoCancha(dto: any) {
     email: result.user.email, 
     sub: result.user.id_dueno,
     tipo: 'owner'
+  };
+  const token = await this.jwtService.signAsync(payload);
+  
+  return {
+    ...result,
+    token,
+  };
+}
+//admin
+async loginAdmin(dto: any) {
+  const result = await this.adminService.login(dto.email, dto.password);
+  
+  const payload = { 
+    email: result.user.email, 
+    sub: result.user.id_admin,
+    tipo: 'admin'
   };
   const token = await this.jwtService.signAsync(payload);
   

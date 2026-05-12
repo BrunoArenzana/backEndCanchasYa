@@ -12,10 +12,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-
 import { DuenoCanchaService } from './dueno_cancha.service';
 import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
 import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Controller('dueno-cancha')
 export class DuenoCanchaController {
@@ -48,21 +49,25 @@ export class DuenoCanchaController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   findAll() {
     return this.duenoCanchaService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.duenoCanchaService.findOne(+id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateDuenoCanchaDto: UpdateDuenoCanchaDto) {
     return this.duenoCanchaService.update(+id, updateDuenoCanchaDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.duenoCanchaService.remove(+id);
   }
