@@ -39,11 +39,7 @@ export class Usuario {
 
  
 
-<<<<<<< HEAD
  @ManyToMany(() => Cancha, (Cancha) => Cancha.Interes)
-=======
- @ManyToMany(() => Cancha, (cancha) => cancha.usuariosInteresados)
->>>>>>> 880ea1c7260a527d76ddfe33efe75d8ea6fd0c19
   @JoinTable({
     name: 'cancha_usuario',
     joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' }
@@ -59,8 +55,4 @@ export class Usuario {
   reservas!: Reserva[];
 
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 880ea1c7260a527d76ddfe33efe75d8ea6fd0c19

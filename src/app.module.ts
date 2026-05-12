@@ -10,7 +10,6 @@ import { DuenoCanchaModule } from './dueno_cancha/dueno_cancha.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
-<<<<<<< HEAD
 import { Usuario } from './usuario/entities/usuario.entity';
 import { Admin } from './admin/entities/admin.entity';
 import { Reserva } from './reserva/entities/reserva.entity';
@@ -50,46 +49,5 @@ import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity'
     ],
     controllers: [],
     providers: [],
-=======
-import * as fs from 'fs';
-import path from 'path/win32';
-
-
-
-
-@Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: 'localhost',
-        port: 3306,
-        username: configService.get<string>('DB_USER'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_NAME'),
-        //ssl: {
-        //  rejectUnauthorized: true,
-        //  ca: fs.readFileSync('cert/ca.pem').toString(),
-        // //fs.readFileSync(path.join(__dirname, 'certs', 'ca.pem'))
-        //},
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true
-      }),
-    }),
-    AdminModule,
-    ReservaModule,
-    UsuarioModule,
-    ClubModule,
-    PagoModule,
-    DuenoCanchaModule,
-    DeporteModule,
-    CanchaModule,
-    DisponibilidadModule,
-  ],
-  controllers: [],
-  providers: [],
->>>>>>> 880ea1c7260a527d76ddfe33efe75d8ea6fd0c19
 })
 export class AppModule { }

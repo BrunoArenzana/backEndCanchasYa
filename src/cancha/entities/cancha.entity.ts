@@ -1,25 +1,9 @@
-<<<<<<< HEAD
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
-=======
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  ManyToMany,
-} from 'typeorm';
->>>>>>> 880ea1c7260a527d76ddfe33efe75d8ea6fd0c19
 import { Club } from '../../club/entities/club.entity';
 import { Deporte } from '../../deporte/entities/deporte.entity';
 import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
-<<<<<<< HEAD
 import { Usuario } from 'src/usuario/entities/usuario.entity';
-=======
-import { Usuario } from '../../usuario/entities/usuario.entity';
->>>>>>> 880ea1c7260a527d76ddfe33efe75d8ea6fd0c19
 
 @Entity('cancha')
 export class Cancha {
@@ -53,12 +37,7 @@ export class Cancha {
   disponibilidades!: Disponibilidad[];
 
   @ManyToMany(() => Usuario, (usuario) => usuario.canchas)
-<<<<<<< HEAD
   
 
   Interes!: Usuario[];
 }
-=======
-  usuariosInteresados!: Usuario[];
-}
->>>>>>> 880ea1c7260a527d76ddfe33efe75d8ea6fd0c19
