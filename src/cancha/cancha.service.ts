@@ -13,9 +13,14 @@ export class CanchaService {
   ) {}
 
   create(createCanchaDto: CreateCanchaDto) {
-    const cancha = this.canchaRepository.create(createCanchaDto);
+    const cancha = this.canchaRepository.create({
+      ...createCanchaDto,
+      club: { id_club: createCanchaDto.id_club },
+      deporte: { id_deporte: createCanchaDto.id_deporte },
+    });
     return this.canchaRepository.save(cancha);
   }
+
 
   findAll() {
     return this.canchaRepository.find({

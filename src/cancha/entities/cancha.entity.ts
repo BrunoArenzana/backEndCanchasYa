@@ -25,10 +25,10 @@ export class Cancha {
   descripcion_cancha!: string;
 
   @Column({ name: 'precio_por_hora', type: 'decimal', precision: 10, scale: 2, default: 0 })
-  precio_por_hora!: number;
+  precio_por_hora?: number;
 
   @Column({ name: 'activa', type: 'tinyint', default: 1 })
-  activa!: number;
+  activa?: number;
 
   @ManyToOne(() => Club, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_club' })

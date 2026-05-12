@@ -22,13 +22,13 @@ export class Usuario {
   @Column({ name: 'telefono_usuario', type: 'varchar', length: 20, nullable: true })
   telefono_usuario!: string;
 
-   @Column({ name: 'dni_usuario', type: 'varchar', length: 20, nullable: true })
+  @Column({ name: 'dni_usuario', type: 'varchar', length: 20, nullable: true })
   dni_usuario!: string;
-
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
-    @Column({ name: 'ciudad_usuario', type: 'varchar', length: 100, nullable: true })
+
+  @Column({ name: 'ciudad_usuario', type: 'varchar', length: 100, nullable: true })
   ciudad_usuario!: string;
 
   @Column({ name: 'provincia_usuario', type: 'varchar', length: 100, nullable: true })
@@ -37,21 +37,16 @@ export class Usuario {
   @Column({ name: 'cp_usuario', type: 'varchar', length: 20, nullable: true })
   cp_usuario!: string;
 
- 
-
- @ManyToMany(() => Cancha, (cancha) => cancha.usuariosInteresados)
+  @ManyToMany(() => Cancha, (cancha) => cancha.usuariosInteresados)
   @JoinTable({
     name: 'cancha_usuario',
-    joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' }
+    joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' },
+    inverseJoinColumn: { name: 'id_cancha', referencedColumnName: 'id_cancha' }
   })
   canchas!: Cancha[];
 
 
-  @ManyToMany(() => Reserva, (reserva) =>  reserva.usuario)
-  @JoinTable({
-    name: 'reserva_usuario',
-    joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' }
-  })
+  @OneToMany(() => Reserva, (reserva) => reserva.usuario)
   reservas!: Reserva[];
 
 

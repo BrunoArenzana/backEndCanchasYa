@@ -8,6 +8,7 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
+  Put,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -54,10 +55,35 @@ export class DuenoCanchaController {
     return this.duenoCanchaService.findAll();
   }
 
+  @Get('pendientes')
+  getPendientes() {
+    return this.duenoCanchaService.getPendientes();
+  }
+
+  @Get('aceptados')
+  getAceptados() {
+    return this.duenoCanchaService.getAceptados();
+  }
+
   @Get(':id')
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.duenoCanchaService.findOne(+id);
+  }
+
+  @Put(':id/aceptar')
+  aceptarClub(@Param('id') id: string) {
+    return this.duenoCanchaService.aceptarClub(+id);
+  }
+
+  @Put(':id/rechazar')
+  rechazarClub(@Param('id') id: string) {
+    return this.duenoCanchaService.rechazarClub(+id);
+  }
+
+  @Put(':id/toggle-status')
+  toggleStatus(@Param('id') id: string, @Body('activo') activo: boolean) {
+    return this.duenoCanchaService.toggleStatus(+id, activo);
   }
 
   @Patch(':id')
