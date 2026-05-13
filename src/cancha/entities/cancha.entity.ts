@@ -1,17 +1,9 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  ManyToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
 import { Club } from '../../club/entities/club.entity';
 import { Deporte } from '../../deporte/entities/deporte.entity';
 import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
-import { Usuario } from '../../usuario/entities/usuario.entity';
+import { Usuario } from 'src/usuario/entities/usuario.entity';
 
 @Entity('cancha')
 export class Cancha {
@@ -45,5 +37,7 @@ export class Cancha {
   disponibilidades!: Disponibilidad[];
 
   @ManyToMany(() => Usuario, (usuario) => usuario.canchas)
-  usuariosInteresados!: Usuario[];
+  
+
+  Interes!: Usuario[];
 }

@@ -39,7 +39,7 @@ export class Usuario {
 
  
 
- @ManyToMany(() => Cancha, (cancha) => cancha.usuariosInteresados)
+ @ManyToMany(() => Cancha, (Cancha) => Cancha.Interes)
   @JoinTable({
     name: 'cancha_usuario',
     joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' }
