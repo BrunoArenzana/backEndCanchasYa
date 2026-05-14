@@ -10,7 +10,7 @@ export class ReservaService {
   constructor(
     @InjectRepository(Reserva)
     private readonly reservaRepository: Repository<Reserva>,
-  ) {}
+  ) { }
 
   create(createReservaDto: any) {
     const nuevaReserva = this.reservaRepository.create({
@@ -45,8 +45,17 @@ export class ReservaService {
     return this.reservaRepository.findOneBy({ id_reserva: id });
   }
 
-  update(id: number, updateReservaDto: UpdateReservaDto) {
-    return this.reservaRepository.update({ id_reserva: id }, updateReservaDto);
+  update(id: number, updateReservaDto: any) {
+    const { id_usuario, id_cancha, ...resto } = updateReservaDto;
+
+    return this.reservaRepository.update(
+      { id_reserva: id },
+      {
+        ...resto,
+        usuario: id_usuario ? { id_usuario } : undefined,
+        cancha: id_cancha ? { id_cancha } : undefined,
+      }
+    );
   }
 
   remove(id: number) {

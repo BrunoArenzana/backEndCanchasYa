@@ -1,98 +1,96 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+canchaYa   ---   Trabajo Final FullStack  --   
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Google Drive https://drive.google.com/drive/folders/1ERLAKYx2MZ3ad8WySdDEEBkI0lSLMc78
+Trello https://trello.com/b/abW2Uxqt/tp-final
+Prezzi https://prezi.com/p/edit/l3mnsysrfyi0/ (Presentacion producto)
+Redes Sociales producto : Gmail.com:  icanchas@gmail.com
+                          Instagram: www.instagram.com/canchasyaa
+                          Facebook: www.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+CanchaYa - Plataforma de Reserva de Canchas Deportivas (Backend)
+Es la API y el núcleo lógico de la aplicación, encargada de gestionar los datos, la lógica de negocio y las comunicaciones en tiempo real de la plataforma.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+ 📜 Índice
 
-## Project setup
+1.  Idea y Propósito del Proyecto
+2.  🌟 Características Principales
+3.  ⚙️ Funcionalidad Detallada
+4.  🛠️ Stack de Tecnología
+5.  🚀 Cómo Empezar (Guía de Desarrollo)
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## 🎯 Idea y Propósito del Proyecto
+ IDEA y SOLUCION PROPUESTA:
+ 
+El problema: Procesar y gestionar de manera eficiente, segura y en tiempo real las reservas de canchas, pagos, notificaciones y la administración de los clubes.
 
-```bash
-# development
-$ npm run start
+La solución: El Backend de "CanchaYa" provee una API robusta y escalable que sirve de soporte al Frontend. Maneja toda la lógica de validación, persistencia de datos (usuarios, clubes, canchas, reservas) y automatización de tareas (como desactivar clubes por falta de pago mediante Cron Jobs).
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## 🌟 Características Principales
 
-## Run tests
+*   API Robusta: Endpoints estructurados para la gestión integral de entidades.
+*   Comunicación en Tiempo Real: Uso de WebSockets para notificaciones y actualizaciones en vivo.
+*   Automatización de Tareas: Cron Jobs para verificar vencimientos de pagos y actualizar estados de clubes y canchas.
+*   Gestión de Base de Datos: ORM para interacciones seguras y eficientes con la base de datos relacional.
+*   Arquitectura Modular: Construido con NestJS, favoreciendo la escalabilidad y mantenibilidad del código.
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+⚙️ Funcionalidad Detallada
 
-# test coverage
-$ npm run test:cov
-```
+Funcionalidad Actual (MVP)
 
-## Deployment
+*   Gestión de Usuarios y Roles: Creación y autenticación de usuarios (Administradores, Dueños de Club, Usuarios regulares).
+*   Gestión de Clubes y Canchas: ABM (Alta, Baja, Modificación) de complejos deportivos y sus respectivas canchas, incluyendo precios y disponibilidad.
+*   Lógica de Reservas: Validación de superposición de turnos, confirmación de disponibilidad y registro de transacciones.
+*   Tareas Programadas (Cron Jobs): Verificación automática de la fecha de vencimiento de las suscripciones de los clubes para desactivarlos a ellos y a sus canchas si no han pagado.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+---
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+ 🛠️ Stack de Tecnología
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+Este proyecto está construido con un stack de tecnologías moderno para el desarrollo backend, asegurando rendimiento y estructura:
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+   Framework Principal: NestJS (Node.js)
+   Lenguaje: TypeScript
+   Base de Datos: MySQL
+   ORM: TypeORM (para mapeo objeto-relacional)
+   API de Datos: Soporte para GraphQL y Apollo Server
+   WebSockets: Socket.IO para comunicación en tiempo real
+   Tareas Programadas: @nestjs/schedule (Cron Jobs)
+   Pruebas: Jest (Unit testing y E2E)
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+ 🚀 Cómo Empezar (Guía de Desarrollo)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Para levantar el entorno de desarrollo local y empezar a contribuir, sigue estos pasos:
 
-## Support
+1.  Clonar el repositorio y ubicarse en la carpeta Backend:
+    ```bash
+    git clone [URL-DEL-REPOSITORIO]
+    cd canchaya/canchaYa - BACKEND
+    ```
+2.  Tener instalado Node.js o instalarlo para utilizar comandos npm.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+3.  Instalar dependencias:
+    ```bash
+    npm install
+    ```
 
-## Stay in touch
+4.  Configurar las variables de entorno:
+    Crear un archivo `.env` en la raíz del backend con las credenciales de la base de datos MySQL y otras configuraciones necesarias.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+5.  Ejecutar el servidor de desarrollo:
+    ```bash
+    npm run start:dev
+    ```
 
-## License
+6.  La API estará disponible en el puerto configurado (usualmente http://localhost:3000).
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Scheneider Querian, Cabrera Dario, Garcia Marcelo y Arenzana Bruno.
