@@ -74,7 +74,7 @@ Para levantar el entorno de desarrollo local y empezar a contribuir, sigue estos
 1.  Clonar el repositorio y ubicarse en la carpeta Backend:
     ```bash
     git clone [URL-DEL-REPOSITORIO]
-    cd canchaya/canchaYa - BACKEND
+    cd backEndCanchasYa
     ```
 2.  Tener instalado Node.js o instalarlo para utilizar comandos npm.
 
@@ -82,7 +82,15 @@ Para levantar el entorno de desarrollo local y empezar a contribuir, sigue estos
     ```bash
     npm install
     ```
-
+    Modulos detallados individualmente : 
+npm i -g @nestjs/cli
+npm install @nestjs/config
+npm install @nestjs/graphql @nestjs/apollo graphql
+npm install class-validator class-transformer
+npm install @nestjs-modules/mailer nodemailer
+npm install -D @types/nodemailer
+npm install @nestjs/axios axios  **************
+    ```
 4.  Configurar las variables de entorno:
     Crear un archivo `.env` en la raíz del backend con las credenciales de la base de datos MySQL y otras configuraciones necesarias.
 
