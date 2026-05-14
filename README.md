@@ -34,7 +34,6 @@ La solución: El Backend de "CanchaYa" provee una API robusta y escalable que si
 ## 🌟 Características Principales
 
 *   API Robusta: Endpoints estructurados para la gestión integral de entidades.
-*   Comunicación en Tiempo Real: Uso de WebSockets para notificaciones y actualizaciones en vivo.
 *   Automatización de Tareas: Cron Jobs para verificar vencimientos de pagos y actualizar estados de clubes y canchas.
 *   Gestión de Base de Datos: ORM para interacciones seguras y eficientes con la base de datos relacional.
 *   Arquitectura Modular: Construido con NestJS, favoreciendo la escalabilidad y mantenibilidad del código.
@@ -61,7 +60,6 @@ Este proyecto está construido con un stack de tecnologías moderno para el desa
    Base de Datos: MySQL
    ORM: TypeORM (para mapeo objeto-relacional)
    API de Datos: Soporte para GraphQL y Apollo Server
-   WebSockets: Socket.IO para comunicación en tiempo real
    Tareas Programadas: @nestjs/schedule (Cron Jobs)
    Pruebas: Jest (Unit testing y E2E)
 
