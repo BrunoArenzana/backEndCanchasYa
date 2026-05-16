@@ -9,34 +9,41 @@ export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async sendContactMail(data: MailDto) {
-    let plantillaHtml: string;
+    try {
+      let plantillaHtml: string;
 
-    switch (data.subject) {
-      case 'Bienvenido a CanchasYa!':
-        plantillaHtml = 'Bienvenida.html';
-        break;
+      switch (data.subject) {
+        case 'Bienvenido a CanchasYa!':
+          plantillaHtml = 'Bienvenida.html';
+          break;
 
-      case 'Reserva Exitosa':
-        plantillaHtml = 'Reserva.html';
-        break;
+        case 'Reserva Exitosa':
+          plantillaHtml = 'Reserva.html';
+          break;
 
-      default:
-        throw new Error('Subject no válido');
+        default:
+          throw new Error('Subject no válido');
+      }
+
+      const filePath = path.join(process.cwd(),'src','templates',plantillaHtml,);
+
+      let htmlContent = fs.readFileSync(filePath, 'utf8');
+
+      htmlContent = htmlContent.replace(
+        '{{nombre}}',
+        data.nombre,
+      );
+
+      await this.mailerService.sendMail({
+        to: data.email,
+        subject: data.subject,
+        html: htmlContent,
+      });
+
+      console.log(`Mail enviado exitosamente a ${data.email}`);
+    } catch (error) {
+      console.error('Error al enviar mail:', error);
+      throw error;
     }
-
-    const filePath = path.join(process.cwd(),'src','templates',plantillaHtml,);
-
-    let htmlContent = fs.readFileSync(filePath, 'utf8');
-
-    htmlContent = htmlContent.replace(
-      '{{nombre}}',
-      data.nombre,
-    );
-
-    await this.mailerService.sendMail({
-      to: data.email,
-      subject: data.subject,
-      html: htmlContent,
-    });
   }
 }

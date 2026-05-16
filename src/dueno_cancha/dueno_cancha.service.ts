@@ -66,6 +66,10 @@ export class DuenoCanchaService {
         email_dueno: data.email,
         password_dueno: data.password,
         telefono_dueno: data.telefono,
+        direccion_dueno: data.direccion || 'sin direccion',
+        ciudad_dueno: data.ciudad,
+        provincia_dueno: data.provincia,
+        cp_dueno: data.cp,
       });
 
       const savedDueno = await queryRunner.manager.save(dueno);
@@ -74,6 +78,8 @@ export class DuenoCanchaService {
         nombre_club: data.razonSocial,
         direccion_club: data.direccion || 'sin direccion',
         ciudad_club: data.ciudad,
+        provincia_club: data.provincia,
+        cp_club: data.cp,
         telefono_club: data.telefono,
         deportes_club: deportesSeleccionados,
         logo_club: file ? `/uploads/${file.filename}` : undefined,
@@ -98,6 +104,10 @@ export class DuenoCanchaService {
           descripcion_cancha: `Cancha de ${nombreDeporte} del club ${savedClub.nombre_club}`,
           precio_por_hora: 0,
           activa: 1,
+          direccion_cancha: data.direccion || 'sin direccion',
+          ciudad_cancha: data.ciudad,
+          provincia_cancha: data.provincia,
+          cp_cancha: data.cp,
           club: savedClub,
           deporte,
         });

@@ -22,6 +22,18 @@ export class Cancha {
   @Column({ name: 'activa', type: 'tinyint', default: 1 })
   activa!: number;
 
+  @Column({ name: 'direccion_cancha', type: 'varchar', length: 255, nullable: true })
+  direccion_cancha!: string;
+
+  @Column({ name: 'ciudad_cancha', type: 'varchar', length: 100, nullable: true })
+  ciudad_cancha!: string;
+
+  @Column({ name: 'provincia_cancha', type: 'varchar', length: 100, nullable: true })
+  provincia_cancha!: string;
+
+  @Column({ name: 'cp_cancha', type: 'varchar', length: 20, nullable: true })
+  cp_cancha!: string;
+
   @ManyToOne(() => Club, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_club' })
   club!: Club;

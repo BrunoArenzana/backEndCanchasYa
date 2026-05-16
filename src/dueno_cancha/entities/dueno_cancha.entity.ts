@@ -22,6 +22,18 @@ export class DuenoCancha {
   @Column({ name: 'telefono_dueno', type: 'varchar', length: 20, nullable: true })
   telefono_dueno!: string;
 
+  @Column({ name: 'direccion_dueno', type: 'varchar', length: 255, nullable: true })
+  direccion_dueno!: string;
+
+  @Column({ name: 'ciudad_dueno', type: 'varchar', length: 100, nullable: true })
+  ciudad_dueno!: string;
+
+  @Column({ name: 'provincia_dueno', type: 'varchar', length: 100, nullable: true })
+  provincia_dueno!: string;
+
+  @Column({ name: 'cp_dueno', type: 'varchar', length: 20, nullable: true })
+  cp_dueno!: string;
+
   @Column({ 
     name: 'estado_dueno', 
     type: 'enum',

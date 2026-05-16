@@ -24,6 +24,12 @@ export class Club {
   @Column({ name: 'ciudad_club', type: 'varchar', length: 100 })
   ciudad_club!: string;
 
+  @Column({ name: 'provincia_club', type: 'varchar', length: 100, nullable: true })
+  provincia_club!: string;
+
+  @Column({ name: 'cp_club', type: 'varchar', length: 20, nullable: true })
+  cp_club!: string;
+
   @Column({ name: 'telefono_club', type: 'varchar', length: 20, nullable: true })
   telefono_club!: string;
 
