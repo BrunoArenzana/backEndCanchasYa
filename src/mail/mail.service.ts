@@ -41,6 +41,7 @@ export class MailService {
       });
 
       console.log(`Mail enviado exitosamente a ${data.email}`);
+
     } catch (error) {
       console.error('Error al enviar mail:', error);
       throw error;
