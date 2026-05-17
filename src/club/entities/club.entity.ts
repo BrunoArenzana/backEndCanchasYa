@@ -21,7 +21,7 @@ export class Club {
   @Column({ name: 'direccion_club', type: 'varchar', length: 255 })
   direccion_club!: string;
 
-  @Column({ name: 'ciudad_club', type: 'varchar', length: 100 })
+  @Column({ name: 'ciudad_club', type: 'varchar', length: 100, nullable: true })
   ciudad_club!: string;
 
   @Column({ name: 'provincia_club', type: 'varchar', length: 100, nullable: true })
