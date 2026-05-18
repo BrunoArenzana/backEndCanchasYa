@@ -13,6 +13,7 @@ import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
 import { Usuario } from '../../usuario/entities/usuario.entity';
 
+
 @Entity('cancha')
 export class Cancha {
   @PrimaryGeneratedColumn({ name: 'id_cancha' })

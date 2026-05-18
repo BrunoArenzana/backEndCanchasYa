@@ -13,6 +13,8 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ReviewPayCron } from './cron/reviewPay.cron';
+import { Club } from './club/entities/club.entity';
+import { Cancha } from './cancha/entities/cancha.entity';
 import * as fs from 'fs';
 
 @Module({
@@ -43,6 +45,7 @@ import * as fs from 'fs';
     CanchaModule,
     DisponibilidadModule,
     AuthModule,
+    TypeOrmModule.forFeature([Club, Cancha]),
   ],
   controllers: [],
   providers: [ReviewPayCron],

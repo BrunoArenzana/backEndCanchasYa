@@ -49,6 +49,9 @@ export class Club {
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
 
+  @CreateDateColumn({ name: 'vencimiento_pago', type: 'datetime' })
+  vencimiento_pago!: Date;
+
   @OneToMany(() => Cancha, (cancha) => cancha.club)
   canchas!: Cancha[];
 
