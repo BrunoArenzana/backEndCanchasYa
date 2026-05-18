@@ -17,6 +17,10 @@ export class MailService {
           plantillaHtml = 'Bienvenida.html';
           break;
 
+        case 'Club Registrado en CanchasYa!':
+          plantillaHtml = 'RegistroClub.html';
+          break;
+
         case 'Reserva Exitosa':
           plantillaHtml = 'Reserva.html';
           break;
