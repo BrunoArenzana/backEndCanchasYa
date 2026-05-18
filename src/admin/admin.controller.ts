@@ -27,7 +27,7 @@ export class AdminController {
     return this.adminService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch('  ')
     @UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.update(+id, updateAdminDto);
