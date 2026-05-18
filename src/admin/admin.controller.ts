@@ -10,6 +10,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Post()
+    @UseGuards(AuthGuard)
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
@@ -21,16 +22,19 @@ export class AdminController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.adminService.findOne(+id);
   }
 
   @Patch(':id')
+    @UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminService.update(+id, updateAdminDto);
   }
 
   @Delete(':id')
+    @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.adminService.remove(+id);
   }

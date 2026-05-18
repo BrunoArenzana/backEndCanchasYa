@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CanchaService } from './cancha.service';
 import { CreateCanchaDto } from './dto/create-cancha.dto';
 import { UpdateCanchaDto } from './dto/update-cancha.dto';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('cancha')
 export class CanchaController {
@@ -13,6 +15,7 @@ export class CanchaController {
   }
 
   @Get('club/:idClub')
+    //@UseGuards(AuthGuard)
   findByClub(@Param('idClub') idClub: string) {
     return this.canchaService.findByClub(+idClub);
   }
@@ -23,16 +26,19 @@ export class CanchaController {
   }
 
   @Post()
+    @UseGuards(AuthGuard)
   create(@Body() createCanchaDto: CreateCanchaDto) {
     return this.canchaService.create(createCanchaDto);
   }
   
   @Patch(':id')
+  @UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateCanchaDto: UpdateCanchaDto) {
     return this.canchaService.update(+id, updateCanchaDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.canchaService.remove(+id);
   }
