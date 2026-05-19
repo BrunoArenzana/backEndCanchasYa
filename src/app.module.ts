@@ -3,24 +3,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './admin/admin.module';
 import { ReservaModule } from './reserva/reserva.module';
-import { UsuarioModule } from './usuario/usuario.module';
 import { ClubModule } from './club/club.module';
 import { PagoModule } from './pago/pago.module';
-import { DuenoCanchaModule } from './dueno_cancha/dueno_cancha.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
-import { Usuario } from './usuario/entities/usuario.entity';
 import { Admin } from './admin/entities/admin.entity';
 import { Reserva } from './reserva/entities/reserva.entity';
 import { Club } from './club/entities/club.entity';
 import { Pago } from './pago/entities/pago.entity';
-import { DuenoCancha } from './dueno_cancha/entities/dueno_cancha.entity';
 import { Deporte } from './deporte/entities/deporte.entity';
 import { Cancha } from './cancha/entities/cancha.entity';
 import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
+import { UserModule } from './user/user.module';
 
 
 @Module({
@@ -36,7 +33,9 @@ import { MailModule } from './mail/mail.module';
                 password: configService.get<string>('DB_PASSWORD'),
                 database: configService.get<string>('DB_NAME'),
                 entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                synchronize: true,
+                // Disabled automatic schema sync to avoid foreign-key migration errors.
+                // Run proper migrations or fix DB data before enabling.
+                synchronize: false,
             }),
 
         }),
@@ -59,14 +58,13 @@ import { MailModule } from './mail/mail.module';
         }),
         AdminModule,
         ReservaModule,
-        UsuarioModule,
         ClubModule,
         PagoModule,
-        DuenoCanchaModule,
         DeporteModule,
         CanchaModule,
         DisponibilidadModule,
         MailModule,
+        UserModule,
     ],
     controllers: [],
     providers: [],

@@ -13,17 +13,19 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 
-import { DuenoCanchaService } from './dueno_cancha.service';
-import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
-import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller('dueno-cancha')
-export class DuenoCanchaController {
-  constructor(private readonly duenoCanchaService: DuenoCanchaService) {}
+
+
+@Controller('user')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createDuenoCanchaDto: CreateDuenoCanchaDto) {
-    return this.duenoCanchaService.create(createDuenoCanchaDto);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
   @Post('register')
@@ -39,31 +41,31 @@ export class DuenoCanchaController {
     }),
   )
   createWithClub(@Body() body: any, @UploadedFile() file: any) {
-    return this.duenoCanchaService.createDuenoWithClub(body, file);
+    return this.userService.createWithClub(body, file);
   }
 
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
-    return this.duenoCanchaService.login(body.email, body.password);
+    return this.userService.login(body.email, body.password);
   }
 
   @Get()
   findAll() {
-    return this.duenoCanchaService.findAll();
+    return this.userService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.duenoCanchaService.findOne(+id);
+    return this.userService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDuenoCanchaDto: UpdateDuenoCanchaDto) {
-    return this.duenoCanchaService.update(+id, updateDuenoCanchaDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.duenoCanchaService.remove(+id);
+    return this.userService.remove(+id);
   }
 }

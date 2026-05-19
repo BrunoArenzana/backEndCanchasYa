@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn, ManyToMany } from 'typeorm';
-import { DuenoCancha } from '../../dueno_cancha/entities/dueno_cancha.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Admin } from '../../admin/entities/admin.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
+import { User } from '../../user/entities/user.entity';
 
 
 @Entity('club')
@@ -44,9 +44,9 @@ export class Club {
   })
   estado!: string;
 
-  @ManyToOne(() => DuenoCancha, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_dueno' })
-  dueno!: DuenoCancha;
+  dueno!: User;
 
   @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_admin_aprobado' })

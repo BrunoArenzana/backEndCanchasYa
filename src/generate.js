@@ -1,6 +1,6 @@
 const { execSync } = require('child_process');
 
-const entities = ['admin', 'reserva', 'usuario', 'club', 'pago', 'dueno_cancha', 'deporte', 'cancha', 'disponibilidad'];
+const entities = ['admin', 'reserva', 'club', 'pago', 'deporte', 'cancha', 'disponibilidad'];
 
 entities.forEach(entity => {
   console.log(`Generando: ${entity}...`);

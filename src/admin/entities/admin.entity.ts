@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
 import { Club } from '../../club/entities/club.entity';
-import { DuenoCancha } from '../../dueno_cancha/entities/dueno_cancha.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity('admin')
 export class Admin {
@@ -22,6 +22,6 @@ export class Admin {
   @OneToMany(() => Club, (club) => club.admin_aprobado)
   clubs_aprobados!: Club[];
   
-  @OneToMany(() => DuenoCancha, (dueno) => dueno.admin_aprobado)
-  duenos_aprobados!: DuenoCancha[];
+  @OneToMany(() => User, (user) => user.admin_aprobado)
+  usuarios_aprobados!: User[];
 }

@@ -1,18 +1,20 @@
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
-import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
-import { Repository, DataSource } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DuenoCancha } from './entities/dueno_cancha.entity';
+import { User } from './entities/user.entity';
 import { Club } from '../club/entities/club.entity';
 import { Cancha } from '../cancha/entities/cancha.entity';
 import { Deporte } from '../deporte/entities/deporte.entity';
+import { Repository, DataSource } from 'typeorm';
+
+
 
 @Injectable()
-export class DuenoCanchaService {
+export class UserService {
   constructor(
-    @InjectRepository(DuenoCancha)
-    private duenoCanchaRepository: Repository<DuenoCancha>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     @InjectRepository(Club)
     private clubRepository: Repository<Club>,
@@ -20,36 +22,44 @@ export class DuenoCanchaService {
     private dataSource: DataSource,
   ) {}
 
-  create(createDuenoCanchaDto: CreateDuenoCanchaDto) {
-    const dueno = this.duenoCanchaRepository.create(createDuenoCanchaDto);
-    return this.duenoCanchaRepository.save(dueno);
+  create(createUserDto: CreateUserDto) {
+    const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
+    const estado = tipo === 'usuario' ? 'activo' : 'pendiente_aprobacion';
+
+    const user = this.userRepository.create({
+      ...createUserDto,
+      tipo_usuario: tipo,
+      estado_usuario: estado,
+    });
+
+    return this.userRepository.save(user);
   }
 
   findAll() {
-    return this.duenoCanchaRepository.find({
+    return this.userRepository.find({
       relations: ['clubs'],
     });
   }
 
   findOne(id: number) {
-    return this.duenoCanchaRepository.findOne({
-      where: { id_dueno: id },
+    return this.userRepository.findOne({
+      where: { id_usuario: id },
       relations: ['clubs'],
     });
   }
 
-  update(id: number, updateDuenoCanchaDto: UpdateDuenoCanchaDto) {
-    return this.duenoCanchaRepository.update(
-      { id_dueno: id },
-      updateDuenoCanchaDto,
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(
+      { id_usuario: id },
+      updateUserDto,
     );
   }
 
   remove(id: number) {
-    return this.duenoCanchaRepository.delete({ id_dueno: id });
+    return this.userRepository.delete({ id_usuario: id });
   }
 
-  async createDuenoWithClub(data: any, file?: any) {
+  async createWithClub(data: any, file?: any) {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -60,19 +70,22 @@ export class DuenoCanchaService {
         ? JSON.parse(data.canchas)
         : [];
 
-      const dueno = queryRunner.manager.create(DuenoCancha, {
-        nombre_dueno: data.nombre,
-        apellido_dueno: data.apellido,
-        email_dueno: data.email,
-        password_dueno: data.password,
-        telefono_dueno: data.telefono,
-        direccion_dueno: data.direccion || 'sin direccion',
-        ciudad_dueno: data.ciudad,
-        provincia_dueno: data.provincia,
-        cp_dueno: data.cp,
+      const user = queryRunner.manager.create(User, {
+        nombre_usuario: data.nombre,
+        apellido_usuario: data.apellido,
+        email_usuario: data.email,
+        password_usuario: data.password,
+        telefono_usuario: data.telefono,
+        dni_usuario: data.DNI || data.dni || null,
+        CUIT_usuario: data.CUIT || data.cuit || null,
+        direccion_usuario: data.direccion || 'sin direccion',
+        ciudad_usuario: data.ciudad,
+        provincia_usuario: data.provincia,
+        cp_usuario: data.cp,
+        tipo_usuario: data.tipo || 'dueno',
       });
 
-      const savedDueno = await queryRunner.manager.save(dueno);
+      const savedUser = await queryRunner.manager.save(user);
 
       const club = queryRunner.manager.create(Club, {
         nombre_club: data.razonSocial,
@@ -83,20 +96,24 @@ export class DuenoCanchaService {
         telefono_club: data.telefono,
         deportes_club: deportesSeleccionados,
         logo_club: file ? `/uploads/${file.filename}` : undefined,
-        dueno: savedDueno,
+        dueno: savedUser,
       });
 
       const savedClub = await queryRunner.manager.save(club);
 
       for (const nombreDeporte of deportesSeleccionados) {
-        const deporte = await queryRunner.manager.findOne(Deporte, {
+        let deporte = await queryRunner.manager.findOne(Deporte, {
           where: { nombre_deporte: nombreDeporte },
         });
 
         if (!deporte) {
-          throw new BadRequestException(
-            `El deporte "${nombreDeporte}" no existe en la base de datos`,
-          );
+          // Si el deporte no existe, lo creamos automáticamente para facilitar el registro.
+          const nuevoDeporte = queryRunner.manager.create(Deporte, {
+            nombre_deporte: nombreDeporte,
+          });
+
+          await queryRunner.manager.save(nuevoDeporte);
+          deporte = nuevoDeporte;
         }
 
         const cancha = queryRunner.manager.create(Cancha, {
@@ -119,7 +136,7 @@ export class DuenoCanchaService {
 
       return {
         message: 'Dueño, club y canchas creados correctamente',
-        dueno: savedDueno,
+        dueno: savedUser,
         club: savedClub,
       };
     } catch (error) {
@@ -131,25 +148,25 @@ export class DuenoCanchaService {
   }
 
   async login(email: string, password: string) {
-    const dueno = await this.duenoCanchaRepository.findOne({
-      where: { email_dueno: email },
+    const user = await this.userRepository.findOne({
+      where: { email_usuario: email },
       relations: ['clubs'],
     });
 
-    if (!dueno || dueno.password_dueno !== password) {
+    if (!user || user.password_usuario !== password) {
       throw new UnauthorizedException('Usuario o contraseña incorrectos');
     }
 
-    const clubPrincipal = dueno.clubs?.[0] || null;
+    const clubPrincipal = user.clubs?.[0] || null;
 
     return {
       message: 'Login exitoso',
       user: {
-        id_dueno: dueno.id_dueno,
-        nombre: dueno.nombre_dueno,
-        apellido: dueno.apellido_dueno,
-        email: dueno.email_dueno,
-        tipo: 'club',
+        id_usuario: user.id_usuario,
+        nombre: user.nombre_usuario,
+        apellido: user.apellido_usuario,
+        email: user.email_usuario,
+        tipo: user.tipo_usuario,
         club: clubPrincipal,
       },
     };
