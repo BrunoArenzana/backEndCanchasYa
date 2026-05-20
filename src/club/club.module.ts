@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClubService } from './club.service';
 import { ClubController } from './club.controller';
 import { Club } from './entities/club.entity';
-import { DuenoCancha } from '../dueno_cancha/entities/dueno_cancha.entity';
+import { User } from '../user/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Club, DuenoCancha]),
+    TypeOrmModule.forFeature([Club, User]),
   ],
   controllers: [ClubController],
   providers: [ClubService],

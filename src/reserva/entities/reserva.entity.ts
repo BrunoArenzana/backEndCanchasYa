@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { Usuario } from '../../usuario/entities/usuario.entity';
+import { User } from '../../user/entities/user.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
 import { Pago } from '../../pago/entities/pago.entity';
 
@@ -28,9 +28,9 @@ export class Reserva {
   })
   estado!: string;
 
-  @ManyToOne(() => Usuario, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_usuario' })
-  usuario!: Usuario;
+  usuario!: User;
 
   @ManyToOne(() => Cancha, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_cancha' })

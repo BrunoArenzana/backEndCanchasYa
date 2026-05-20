@@ -4,17 +4,17 @@ import { UpdateClubDto } from './dto/update-club.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Club } from './entities/club.entity';
-import { DuenoCancha } from 'src/dueno_cancha/entities/dueno_cancha.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ClubService {
   constructor(
-  @InjectRepository(Club)
-  private clubRepository: Repository<Club>,
+    @InjectRepository(Club)
+    private clubRepository: Repository<Club>,
 
-  @InjectRepository(DuenoCancha)
-  private duenoRepository: Repository<DuenoCancha>,
-) {}
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) {}
 
   create(createClubDto: CreateClubDto) {
     const club = this.clubRepository.create(createClubDto);
@@ -29,9 +29,11 @@ export class ClubService {
   findOne(id: number) {
     return this.clubRepository.findOneBy({ id_club: id });
   }
-findByDueno(id_dueno: number) {
-    return this.clubRepository.find({ where: { dueno: { id_dueno: id_dueno } } });
+
+  findByDueno(id_usuario: number) {
+    return this.clubRepository.find({ where: { dueno: { id_usuario: id_usuario } } });
   }
+
   update(id: number, updateClubDto: UpdateClubDto) {
     return this.clubRepository.update(id, updateClubDto);
   }
@@ -40,23 +42,23 @@ findByDueno(id_dueno: number) {
     return this.clubRepository.delete(id);
   }
   
-  async createForOwner(idDueno: number, data: any) {
-  const dueno = await this.duenoRepository.findOne({
-    where: { id_dueno: idDueno }
-  });
+  async createForOwner(idUsuario: number, data: any) {
+    const user = await this.userRepository.findOne({
+      where: { id_usuario: idUsuario },
+    });
 
-  if (!dueno) {
-    throw new Error('Dueño no encontrado');
+    if (!user) {
+      throw new Error('Usuario dueño no encontrado');
+    }
+
+    const club = this.clubRepository.create({
+      nombre_club: data.razonSocial,
+      direccion_club: data.direccion,
+      ciudad_club: data.ciudad,
+      telefono_club: data.telefono,
+      dueno: user,
+    });
+
+    return this.clubRepository.save(club);
   }
-
-  const club = this.clubRepository.create({
-    nombre_club: data.razonSocial,
-    direccion_club: data.direccion,
-    ciudad_club: data.ciudad,
-    telefono_club: data.telefono,
-    dueno: dueno,
-  });
-
-  return this.clubRepository.save(club);
-}
 }

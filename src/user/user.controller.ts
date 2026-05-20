@@ -19,13 +19,15 @@ import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { UseGuards } from '@nestjs/common';
 
-@Controller('dueno-cancha')
-export class DuenoCanchaController {
-  constructor(private readonly duenoCanchaService: DuenoCanchaService) {}
+
+
+@Controller('user')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createDuenoCanchaDto: CreateDuenoCanchaDto) {
-    return this.duenoCanchaService.create(createDuenoCanchaDto);
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
   }
 
   @Post('register')
@@ -41,18 +43,18 @@ export class DuenoCanchaController {
     }),
   )
   createWithClub(@Body() body: any, @UploadedFile() file: any) {
-    return this.duenoCanchaService.createDuenoWithClub(body, file);
+    return this.userService.createWithClub(body, file);
   }
 
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
-    return this.duenoCanchaService.login(body.email, body.password);
+    return this.userService.login(body.email, body.password);
   }
 
   @Get()
   @UseGuards(AuthGuard)
   findAll() {
-    return this.duenoCanchaService.findAll();
+    return this.userService.findAll();
   }
 
   @Get('pendientes')
@@ -68,7 +70,7 @@ export class DuenoCanchaController {
   @Get(':id')
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
-    return this.duenoCanchaService.findOne(+id);
+    return this.userService.findOne(+id);
   }
 
   @Put(':id/aceptar')
@@ -95,6 +97,6 @@ export class DuenoCanchaController {
   @Delete(':id')
   @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
-    return this.duenoCanchaService.remove(+id);
+    return this.userService.remove(+id);
   }
 }

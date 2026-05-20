@@ -1,17 +1,9 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  JoinColumn,
-  ManyToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany } from 'typeorm';
 import { Club } from '../../club/entities/club.entity';
 import { Deporte } from '../../deporte/entities/deporte.entity';
 import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
-import { Usuario } from '../../usuario/entities/usuario.entity';
+import { User } from 'src/user/entities/user.entity';
 
 
 @Entity('cancha')
@@ -31,6 +23,18 @@ export class Cancha {
   @Column({ name: 'activa', type: 'tinyint', default: 1 })
   activa?: number;
 
+  @Column({ name: 'direccion_cancha', type: 'varchar', length: 255, nullable: true })
+  direccion_cancha!: string;
+
+  @Column({ name: 'ciudad_cancha', type: 'varchar', length: 100, nullable: true })
+  ciudad_cancha!: string;
+
+  @Column({ name: 'provincia_cancha', type: 'varchar', length: 100, nullable: true })
+  provincia_cancha!: string;
+
+  @Column({ name: 'cp_cancha', type: 'varchar', length: 20, nullable: true })
+  cp_cancha!: string;
+
   @ManyToOne(() => Club, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_club' })
   club!: Club;
@@ -45,6 +49,6 @@ export class Cancha {
   @OneToMany(() => Disponibilidad, (disponibilidad) => disponibilidad.cancha)
   disponibilidades!: Disponibilidad[];
 
-  @ManyToMany(() => Usuario, (usuario) => usuario.canchas)
-  usuariosInteresados!: Usuario[];
+  @ManyToMany(() => User, (user) => user.canchas)
+  Interes!: User[];
 }
