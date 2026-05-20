@@ -66,34 +66,44 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      const deportesSeleccionados: string[] = data.canchas
-        ? JSON.parse(data.canchas)
+
+      //EVITA EL ARRAY DE CUIT EN EL FORMULARIO, QUE VIENE COMO UN ARRAY
+      const normalize = (v: any) => (Array.isArray(v) ? v[0] : v);
+
+      const canchasRaw = normalize(data.canchas);
+
+      /*// Reject array values for scalar fields that must be single-valued in the form.
+      if (Array.isArray(data.CUIT) || Array.isArray(data.cuit)) {
+        throw new BadRequestException('El campo CUIT debe enviarse como un único valor, no como un arreglo. Revisa el formulario.');
+      }*/
+      const deportesSeleccionados: string[] = canchasRaw
+        ? JSON.parse(canchasRaw)
         : [];
 
       const user = queryRunner.manager.create(User, {
-        nombre_usuario: data.nombre,
-        apellido_usuario: data.apellido,
-        email_usuario: data.email,
-        password_usuario: data.password,
-        telefono_usuario: data.telefono,
-        dni_usuario: data.DNI || data.dni || null,
-        CUIT_usuario: data.CUIT || data.cuit || null,
-        direccion_usuario: data.direccion || 'sin direccion',
-        ciudad_usuario: data.ciudad,
-        provincia_usuario: data.provincia,
-        cp_usuario: data.cp,
-        tipo_usuario: data.tipo || 'dueno',
+        nombre_usuario: (data.nombre),
+        apellido_usuario: (data.apellido),
+        email_usuario: (data.email),
+        password_usuario: (data.password),
+        telefono_usuario: (data.telefono),
+        dni_usuario: (data.DNI) || (data.dni) || null,
+        CUIT_usuario: normalize(data.CUIT) || normalize(data.cuit) || null,
+        direccion_usuario:(data.direccion) || 'sin direccion',
+        ciudad_usuario: (data.ciudad),
+        provincia_usuario: (data.provincia),
+        cp_usuario: (data.cp),
+        tipo_usuario: (data.tipo) || 'dueno',
       });
 
       const savedUser = await queryRunner.manager.save(user);
 
       const club = queryRunner.manager.create(Club, {
-        nombre_club: data.razonSocial,
-        direccion_club: data.direccion || 'sin direccion',
-        ciudad_club: data.ciudad,
-        provincia_club: data.provincia,
-        cp_club: data.cp,
-        telefono_club: data.telefono,
+        nombre_club: normalize(data.razonSocial) || normalize(data.nombreClub) || 'Sin nombre',
+        direccion_club: normalize(data.direccion) || 'sin direccion',
+        ciudad_club: normalize(data.ciudad),
+        provincia_club: normalize(data.provincia),
+        cp_club: normalize(data.cp),
+        telefono_club: normalize(data.telefono),
         deportes_club: deportesSeleccionados,
         logo_club: file ? `/uploads/${file.filename}` : undefined,
         dueno: savedUser,
