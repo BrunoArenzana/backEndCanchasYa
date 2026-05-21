@@ -16,7 +16,7 @@ export class ClubController {
   }
 
   @Post('dueno/:idDueno')
-    @UseGuards(AuthGuard)
+    //@UseGuards(AuthGuard)
   createForOwner(
     @Param('idDueno') idDueno: string,
     @Body() body: any
@@ -40,13 +40,13 @@ export class ClubController {
 
 
   @Patch(':id')
-    @UseGuards(AuthGuard)
+    //@UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateClubDto: UpdateClubDto) {
     return this.clubService.update(+id, updateClubDto);
   }
 
   @Delete(':id')
-    @UseGuards(AuthGuard)//posible admin rol
+    //@UseGuards(AuthGuard)//posible admin rol
   remove(@Param('id') id: string) {
     return this.clubService.remove(+id);
   }

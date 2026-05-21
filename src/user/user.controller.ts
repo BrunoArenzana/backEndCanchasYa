@@ -8,16 +8,14 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
-  Put,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { DuenoCanchaService } from './dueno_cancha.service';
-import { CreateDuenoCanchaDto } from './dto/create-dueno_cancha.dto';
-import { UpdateDuenoCanchaDto } from './dto/update-dueno_cancha.dto';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { UseGuards } from '@nestjs/common';
+
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 
 
@@ -52,50 +50,21 @@ export class UserController {
   }
 
   @Get()
-  @UseGuards(AuthGuard)
   findAll() {
     return this.userService.findAll();
   }
 
-  @Get('pendientes')
-  getPendientes() {
-    return this.duenoCanchaService.getPendientes();
-  }
-
-  @Get('aceptados')
-  getAceptados() {
-    return this.duenoCanchaService.getAceptados();
-  }
-
   @Get(':id')
-  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
-  @Put(':id/aceptar')
-  aceptarClub(@Param('id') id: string) {
-    return this.duenoCanchaService.aceptarClub(+id);
-  }
-
-  @Put(':id/rechazar')
-  rechazarClub(@Param('id') id: string) {
-    return this.duenoCanchaService.rechazarClub(+id);
-  }
-
-  @Put(':id/toggle-status')
-  toggleStatus(@Param('id') id: string, @Body('activo') activo: boolean) {
-    return this.duenoCanchaService.toggleStatus(+id, activo);
-  }
-
   @Patch(':id')
-  @UseGuards(AuthGuard)
-  update(@Param('id') id: string, @Body() updateDuenoCanchaDto: UpdateDuenoCanchaDto) {
-    return this.duenoCanchaService.update(+id, updateDuenoCanchaDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }

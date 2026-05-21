@@ -26,19 +26,19 @@ export class CanchaController {
   }
 
   @Post()
-    @UseGuards(AuthGuard)
+    //@UseGuards(AuthGuard)
   create(@Body() createCanchaDto: CreateCanchaDto) {
     return this.canchaService.create(createCanchaDto);
   }
   
   @Patch(':id')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   update(@Param('id') id: string, @Body() updateCanchaDto: UpdateCanchaDto) {
     return this.canchaService.update(+id, updateCanchaDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.canchaService.remove(+id);
   }

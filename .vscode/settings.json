@@ -1,9 +1,15 @@
+{
+  "window.title": " 🟢 BACK END - ${rootName}",
 
-  {
-  "window.title": "🟢 BACK END - ${rootName}",
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#06581f",
-    "titleBar.activeForeground": "#12028d",
-    "workbench.iconTheme": "material-icon-theme"
-  }
+    "titleBar.activeForeground": "#12028d"
+  },
+
+  "workbench.iconTheme": "material-icon-theme",
+
+  "background-cover.imagePath": "C:\\Users\\ZuuG1\\Downloads\\wallpaper.png",
+  "background-cover.opacity": 0.15,
+  "background-cover.size": "cover",
+  "background-cover.position": "center"
 }

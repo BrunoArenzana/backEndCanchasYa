@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { Admin } from '../../admin/entities/admin.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
 import { User } from '../../user/entities/user.entity';
 
@@ -40,7 +39,7 @@ export class Club {
     name: 'estado',
     type: 'enum',
     enum: ['activo', 'inactivo', 'pendiente_aprobacion'],
-    default: 'pendiente_aprobacion'
+    default: 'activo'//corregir esto, es pr
   })
   estado!: string;
 
@@ -48,9 +47,9 @@ export class Club {
   @JoinColumn({ name: 'id_dueno' })
   dueno!: User;
 
-  @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'id_admin_aprobado' })
-  admin_aprobado!: Admin;
+  // @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' })
+  // @JoinColumn({ name: 'id_admin_aprobado' })
+  // admin_aprobado!: Admin;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;

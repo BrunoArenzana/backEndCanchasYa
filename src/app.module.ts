@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminModule } from './admin/admin.module';
 import { ReservaModule } from './reserva/reserva.module';
 import { ClubModule } from './club/club.module';
 import { PagoModule } from './pago/pago.module';
@@ -14,6 +13,7 @@ import { ReviewPayCron } from './cron/reviewPay.cron';
 import { Club } from './club/entities/club.entity';
 import { Cancha } from './cancha/entities/cancha.entity';
 import * as fs from 'fs';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -33,12 +33,10 @@ import * as fs from 'fs';
         logging: true
       }),
     }),
-    AdminModule,
     ReservaModule,
-    UsuarioModule,
+    UserModule,
     ClubModule,
     PagoModule,
-    DuenoCanchaModule,
     DeporteModule,
     CanchaModule,
     DisponibilidadModule,

@@ -1,41 +1,41 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { AdminService } from './admin.service';
-import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
+// import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+// import { AdminService } from './admin.service';
+// import { CreateAdminDto } from './dto/create-admin.dto';
+// import { UpdateAdminDto } from './dto/update-admin.dto';
+// import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 
-@Controller('admin')
-export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+// @Controller('admin')
+// export class AdminController {
+//   constructor(private readonly adminService: AdminService) {}
 
-  @Post()
-    @UseGuards(AuthGuard)
-  create(@Body() createAdminDto: CreateAdminDto) {
-    return this.adminService.create(createAdminDto);
-  }
+//   @Post()
+//     @UseGuards(AuthGuard)
+//   create(@Body() createAdminDto: CreateAdminDto) {
+//     return this.adminService.create(createAdminDto);
+//   }
 
-  @Get()
-  @UseGuards(AuthGuard)
-  findAll() {
-    return this.adminService.findAll();
-  }
+//   @Get()
+//   @UseGuards(AuthGuard)
+//   findAll() {
+//     return this.adminService.findAll();
+//   }
 
-  @Get(':id')
-  @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
-  }
+//   @Get(':id')
+//   @UseGuards(AuthGuard)
+//   findOne(@Param('id') id: string) {
+//     return this.adminService.findOne(+id);
+//   }
 
-  @Patch('  ')
-    @UseGuards(AuthGuard)
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminService.update(+id, updateAdminDto);
-  }
+//   @Patch('  ')
+//     @UseGuards(AuthGuard)
+//   update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
+//     return this.adminService.update(+id, updateAdminDto);
+//   }
 
-  @Delete(':id')
-    @UseGuards(AuthGuard)
-  remove(@Param('id') id: string) {
-    return this.adminService.remove(+id);
-  }
-}
+//   @Delete(':id')
+//     @UseGuards(AuthGuard)
+//   remove(@Param('id') id: string) {
+//     return this.adminService.remove(+id);
+//   }
+// }
