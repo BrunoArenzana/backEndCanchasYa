@@ -22,22 +22,18 @@ import { UserModule } from './user/user.module';
 
 @Module({
     imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        TypeOrmModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                type: 'mysql',
-                host: 'localhost',
-                port: 3306,
-                username: configService.get<string>('DB_USER'),
-                password: configService.get<string>('DB_PASSWORD'),
-                database: configService.get<string>('DB_NAME'),
-                entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                // Disabled automatic schema sync to avoid foreign-key migration errors.
-                // Run proper migrations or fix DB data before enabling.
-                synchronize: false,
-            }),
-
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        TypeOrmModule.forRoot({
+            type: 'mysql',
+            host: process.env.DB_HOST,
+            port: Number(process.env.DB_PORT),
+            username: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            autoLoadEntities: true,
+            synchronize: true,
         }),
         MailerModule.forRootAsync({
             inject: [ConfigService],

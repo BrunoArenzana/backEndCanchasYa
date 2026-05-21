@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { ClubService } from './club.service';
 import { CreateClubDto } from './dto/create-club.dto';
 import { UpdateClubDto } from './dto/update-club.dto';
@@ -21,6 +21,16 @@ export class ClubController {
     return this.clubService.createForOwner(+idDueno, body);
   }
 
+  @Get('pendientes')
+  getPendientes() {
+    return this.clubService.getPendientes();
+  }
+
+  @Get('aceptados')
+  getAceptados() {
+    return this.clubService.getAceptados();
+  }
+
   @Get()
   findAll() {
     return this.clubService.findAll();
@@ -34,7 +44,21 @@ export class ClubController {
   findByDueno(@Param('id_dueno') id_dueno: string) {
     return this.clubService.findByDueno(+id_dueno);
   }
-  
+
+  @Put(':id/toggle-status')
+  toggleStatus(@Param('id') id: string, @Body('activo') activo: boolean) {
+    return this.clubService.toggleStatus(+id, activo);
+  }
+
+  @Put(':id/aceptar')
+  aceptar(@Param('id') id: string) {
+    return this.clubService.aceptar(+id);
+  }
+
+  @Put(':id/rechazar')
+  rechazar(@Param('id') id: string) {
+    return this.clubService.rechazar(+id);
+  }
 
 
   @Patch(':id')

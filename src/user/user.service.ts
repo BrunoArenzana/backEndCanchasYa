@@ -176,7 +176,7 @@ export class UserService {
         nombre: user.nombre_usuario,
         apellido: user.apellido_usuario,
         email: user.email_usuario,
-        tipo: user.tipo_usuario,
+        tipo: user.tipo_usuario === 'dueno' ? 'club' : user.tipo_usuario,
         club: clubPrincipal,
       },
     };
