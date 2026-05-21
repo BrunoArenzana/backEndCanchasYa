@@ -1,20 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdminModule } from './admin/admin.module';
 import { ReservaModule } from './reserva/reserva.module';
 import { ClubModule } from './club/club.module';
 import { PagoModule } from './pago/pago.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
-import { Admin } from './admin/entities/admin.entity';
-import { Reserva } from './reserva/entities/reserva.entity';
-import { Club } from './club/entities/club.entity';
-import { Pago } from './pago/entities/pago.entity';
-import { Deporte } from './deporte/entities/deporte.entity';
-import { Cancha } from './cancha/entities/cancha.entity';
-import { Disponibilidad } from './disponibilidad/entities/disponibilidad.entity';
+
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
@@ -52,7 +45,6 @@ import { UserModule } from './user/user.module';
                 },
             }),
         }),
-        AdminModule,
         ReservaModule,
         ClubModule,
         PagoModule,

@@ -24,8 +24,23 @@ export class UserController {
   constructor(private readonly userService: UserService) { }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    try {
+      console.log('Creando user con:', createUserDto);
+      const result = await this.userService.create(createUserDto);
+      console.log('User creado:', result);
+      return result;
+    } catch (error) {
+      console.error('Error al crear user:', error);
+      throw error;
+    }
+  }
+
+  @Post('create-admin')
+  async createAdmin(@Body() createUserDto: CreateUserDto) {
+    // Forzar el tipo a admin para asegurar que se cree como administrador
+    createUserDto.tipo_usuario = 'admin';
+    return this.create(createUserDto);
   }
   @Post('login')
   login(@Body() body: { email: string; password: string }) {

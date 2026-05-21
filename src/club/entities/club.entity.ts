@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
-import { Admin } from '../../admin/entities/admin.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
 import { User } from '../../user/entities/user.entity';
 
@@ -48,9 +47,9 @@ export class Club {
   @JoinColumn({ name: 'id_dueno' })
   dueno!: User;
 
-  @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'id_admin_aprobado' })
-  admin_aprobado!: Admin;
+  admin_aprobado!: User;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
