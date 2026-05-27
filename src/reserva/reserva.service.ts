@@ -10,22 +10,63 @@ export class ReservaService {
   constructor(
     @InjectRepository(Reserva)
     private readonly reservaRepository: Repository<Reserva>,
-  ) {}
+  ) { }
 
-  create(createReservaDto: CreateReservaDto) {
-    return this.reservaRepository.save(createReservaDto);
+  async create(createReservaDto: CreateReservaDto) {
+    const { id_usuario, id_cancha, ...rest } = createReservaDto;
+    const reserva = this.reservaRepository.create({
+      ...rest,
+      usuario: id_usuario ? { id_usuario } : undefined,
+      cancha: id_cancha ? { id_cancha } : undefined,
+    });
+    return this.reservaRepository.save(reserva);
   }
 
   findAll() {
-    return this.reservaRepository.find();
+    return this.reservaRepository.find({
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+    });
+  }
+
+  findByUsuario(idUsuario: number) {
+    return this.reservaRepository.find({
+      where: { usuario: { id_usuario: idUsuario } },
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+    });
+  }
+
+  findByClub(idClub: number) {
+    return this.reservaRepository.find({
+      where: { cancha: { club: { id_club: idClub } } },
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+    });
   }
 
   findOne(id: number) {
-    return this.reservaRepository.findOneBy({ id_reserva: id });
+    return this.reservaRepository.findOne({
+      where: { id_reserva: id },
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+    });
   }
 
-  update(id: number, updateReservaDto: UpdateReservaDto) {
-    return this.reservaRepository.update({ id_reserva: id }, updateReservaDto);
+  async update(id: number, updateReservaDto: UpdateReservaDto) {
+    const { id_usuario, id_cancha, ...rest } = updateReservaDto;
+
+
+    const reserva = await this.reservaRepository.findOne({ where: { id_reserva: id } });
+    if (!reserva) return null;
+
+    Object.assign(reserva, rest);
+
+    if (id_usuario !== undefined) {
+      reserva.usuario = { id_usuario } as any;
+    }
+
+    if (id_cancha !== undefined) {
+      reserva.cancha = { id_cancha } as any;
+    }
+
+    return this.reservaRepository.save(reserva);
   }
 
   remove(id: number) {
