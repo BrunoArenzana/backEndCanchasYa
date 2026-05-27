@@ -21,13 +21,31 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    try {
+      console.log('Creando user con:', createUserDto);
+      console.log('User creado:', result);  
+      const result = await this.userService.create(createUserDto);
+      return result;
+    } catch (error) {
+      console.error('Error al crear user:', error);
+      throw error;
+    }
   }
 
+  @Post('create-admin')
+  async createAdmin(@Body() createUserDto: CreateUserDto) {
+    // Forzar el tipo a admin para asegurar que se cree como administrador
+    createUserDto.tipo_usuario = 'admin';
+    return this.create(createUserDto);
+  }
+  @Post('login')
+  login(@Body() body: { email: string; password: string }) {
+    return this.userService.login(body.email, body.password);
+  }
   @Post('register')
   @UseInterceptors(
     FileInterceptor('logo', {
@@ -44,10 +62,6 @@ export class UserController {
     return this.userService.createWithClub(body, file);
   }
 
-  @Post('login')
-  login(@Body() body: { email: string; password: string }) {
-    return this.userService.login(body.email, body.password);
-  }
 
   @Get()
   findAll() {

@@ -61,4 +61,58 @@ export class ClubService {
 
     return this.clubRepository.save(club);
   }
+  async getPendientes() {
+    const clubs = await this.clubRepository.find({
+      where: { estado: 'pendiente_aprobacion' },
+      relations: ['dueno']
+    });
+    return clubs.map(club => ({
+      id: club.id_club,
+      nombre: club.nombre_club,
+      email: club.dueno?.email_usuario,
+      telefono: club.telefono_club,
+      canchas: club.deportes_club,
+      direccion: club.direccion_club,
+      activo: false
+    }));
+  }
+
+  async getAceptados() {
+    const clubs = await this.clubRepository.find({
+      where: [
+        { estado: 'activo' },
+        { estado: 'inactivo' }
+      ],
+      relations: ['dueno', 'canchas', 'canchas.deporte']
+    });
+    return clubs.map(club => ({
+      id: club.id_club,
+      nombre: club.nombre_club,
+      email: club.dueno?.email_usuario,
+      telefono: club.telefono_club,
+      canchas: club.deportes_club,
+      direccion: club.direccion_club,
+      logo: club.logo_club,
+      activo: club.estado === 'activo',
+      detallesCanchas: club.canchas?.map(cancha => ({
+        id: cancha.id_cancha,
+        nombre: cancha.nombre_cancha,
+        precio: parseFloat(cancha.precio_por_hora as any) || 0,
+        deporte: cancha.deporte?.nombre_deporte
+      })) || []
+    }));
+  }
+
+  async toggleStatus(id: number, activo: boolean) {
+    const estado = activo ? 'activo' : 'inactivo';
+    return this.clubRepository.update(id, { estado });
+  }
+
+  async aceptar(id: number) {
+    return this.clubRepository.update(id, { estado: 'activo' });
+  }
+
+  async rechazar(id: number) {
+    return this.clubRepository.delete(id);
+  }
 }

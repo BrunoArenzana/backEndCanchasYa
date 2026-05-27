@@ -12,50 +12,61 @@ export class ReservaService {
     private readonly reservaRepository: Repository<Reserva>,
   ) { }
 
-  create(createReservaDto: any) {
-    const nuevaReserva = this.reservaRepository.create({
-      ...createReservaDto,
-      usuario: { id_usuario: createReservaDto.id_usuario },
-      cancha: { id_cancha: createReservaDto.id_cancha },
+  async create(createReservaDto: CreateReservaDto) {
+    const { id_usuario, id_cancha, ...rest } = createReservaDto;
+    const reserva = this.reservaRepository.create({
+      ...rest,
+      usuario: id_usuario ? { id_usuario } : undefined,
+      cancha: id_cancha ? { id_cancha } : undefined,
     });
-    return this.reservaRepository.save(nuevaReserva);
+    return this.reservaRepository.save(reserva);
   }
 
   findAll() {
     return this.reservaRepository.find({
-      relations: ['cancha', 'cancha.club', 'cancha.deporte'],
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
     });
   }
 
-  findByUsuario(id_usuario: number) {
+  findByUsuario(idUsuario: number) {
     return this.reservaRepository.find({
-      where: { usuario: { id_usuario: id_usuario } },
-      relations: ['cancha', 'cancha.club', 'cancha.deporte'],
+      where: { usuario: { id_usuario: idUsuario } },
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
     });
   }
 
-  findByClub(id_club: number) {
+  findByClub(idClub: number) {
     return this.reservaRepository.find({
-      where: { cancha: { club: { id_club: id_club } } },
-      relations: ['cancha', 'cancha.club', 'cancha.deporte'],
+      where: { cancha: { club: { id_club: idClub } } },
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
     });
   }
 
   findOne(id: number) {
-    return this.reservaRepository.findOneBy({ id_reserva: id });
+    return this.reservaRepository.findOne({
+      where: { id_reserva: id },
+      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+    });
   }
 
-  update(id: number, updateReservaDto: any) {
-    const { id_usuario, id_cancha, ...resto } = updateReservaDto;
+  async update(id: number, updateReservaDto: UpdateReservaDto) {
+    const { id_usuario, id_cancha, ...rest } = updateReservaDto;
 
-    return this.reservaRepository.update(
-      { id_reserva: id },
-      {
-        ...resto,
-        usuario: id_usuario ? { id_usuario } : undefined,
-        cancha: id_cancha ? { id_cancha } : undefined,
-      }
-    );
+
+    const reserva = await this.reservaRepository.findOne({ where: { id_reserva: id } });
+    if (!reserva) return null;
+
+    Object.assign(reserva, rest);
+
+    if (id_usuario !== undefined) {
+      reserva.usuario = { id_usuario } as any;
+    }
+
+    if (id_cancha !== undefined) {
+      reserva.cancha = { id_cancha } as any;
+    }
+
+    return this.reservaRepository.save(reserva);
   }
 
   remove(id: number) {

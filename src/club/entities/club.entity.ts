@@ -47,9 +47,9 @@ export class Club {
   @JoinColumn({ name: 'id_dueno' })
   dueno!: User;
 
-  // @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' })
-  // @JoinColumn({ name: 'id_admin_aprobado' })
-  // admin_aprobado!: Admin;
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'id_admin_aprobado' })
+  admin_aprobado!: User;
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;

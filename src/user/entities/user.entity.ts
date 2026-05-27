@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
-//import { Admin } from '../../admin/entities/admin.entity'; 1
+    import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinColumn, JoinTable } from 'typeorm';
 import { Club } from '../../club/entities/club.entity';
 import { Cancha } from '../../cancha/entities/cancha.entity';
 import { Reserva } from '../../reserva/entities/reserva.entity';
@@ -45,9 +44,9 @@ export class User {
     })
     tipo_usuario!: string;
     
-    // @ManyToOne(() => Admin, { nullable: true, onDelete: 'SET NULL' }) 1 
-    // @JoinColumn({ name: 'id_admin_aprobado' }) 1 
-    // admin_aprobado!: Admin; 1
+    @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_admin_aprobado' })
+    admin_aprobado!: User | null;
     @CreateDateColumn({ name: 'created_at', type: 'datetime' })
     created_at!: Date;
 

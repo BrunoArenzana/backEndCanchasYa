@@ -20,14 +20,14 @@ export class ReservaController {
     return this.reservaService.findAll();
   }
 
-  @Get('usuario/:id')
-  findByUsuario(@Param('id') id: string) {
-    return this.reservaService.findByUsuario(+id);
+  @Get('usuario/:idUsuario')
+  findByUsuario(@Param('idUsuario') idUsuario: string) {
+    return this.reservaService.findByUsuario(+idUsuario);
   }
 
-  @Get('club/:id')
-  findByClub(@Param('id') id: string) {
-    return this.reservaService.findByClub(+id);
+  @Get('club/:idClub')
+  findByClub(@Param('idClub') idClub: string) {
+    return this.reservaService.findByClub(+idClub);
   }
 
   @Get(':id')

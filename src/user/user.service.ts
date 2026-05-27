@@ -22,18 +22,40 @@ export class UserService {
     private dataSource: DataSource,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
-    const estado = tipo === 'usuario' ? 'activo' : 'pendiente_aprobacion';
+   async create(createUserDto: CreateUserDto) {
+     try {
+       const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
+       // Admin users should be active immediately, dueno users pendiente_aprobacion, regular users activo
+       const estado = tipo === 'usuario' ? 'activo' : (tipo === 'dueno' ? 'pendiente_aprobacion' : 'activo');
 
-    const user = this.userRepository.create({
-      ...createUserDto,
-      tipo_usuario: tipo,
-      estado_usuario: estado,
-    });
+       console.log('UserService.create - Datos:', { ...createUserDto, tipo, estado });
 
-    return this.userRepository.save(user);
-  }
+       const user = this.userRepository.create({
+         ...createUserDto,
+         tipo_usuario: tipo,
+         estado_usuario: estado,
+       });
+
+       console.log('UserService.create - User object:', user);
+
+       const saved = await this.userRepository.save(user);
+       console.log('UserService.create - Guardado exitosamente:', saved);
+       
+       // Return with explicit field mapping to ensure frontend receives all needed fields
+       return {
+         id_usuario: saved.id_usuario,
+         nombre_usuario: saved.nombre_usuario,
+         apellido_usuario: saved.apellido_usuario,
+         email_usuario: saved.email_usuario,
+         tipo_usuario: saved.tipo_usuario,
+         estado_usuario: saved.estado_usuario,
+         created_at: saved.created_at,
+       };
+     } catch (error) {
+       console.error('UserService.create - Error:', error);
+       throw error;
+     }
+   }
 
   findAll() {
     return this.userRepository.find({
@@ -176,7 +198,7 @@ export class UserService {
         nombre: user.nombre_usuario,
         apellido: user.apellido_usuario,
         email: user.email_usuario,
-        tipo: user.tipo_usuario,
+        tipo: user.tipo_usuario === 'dueno' ? 'club' : user.tipo_usuario,
         club: clubPrincipal,
       },
     };
