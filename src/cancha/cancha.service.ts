@@ -26,7 +26,7 @@ export class CanchaService {
 
   findAll() {
     return this.canchaRepository.find({
-      relations: ['club', 'deporte'],
+      relations: ['id_club', 'id_deporte'],
       where: { activa: 1 },
     });
   }
@@ -34,7 +34,7 @@ export class CanchaService {
   findOne(id: number) {
     return this.canchaRepository.findOne({
       where: { id_cancha: id },
-      relations: ['club', 'deporte'],
+      relations: ['id_club', 'id_deporte'],
     });
   }
 
@@ -46,7 +46,7 @@ export class CanchaService {
         },
         activa: 1,
       },
-      relations: ['club', 'deporte'],
+      relations: ['id_club', 'id_deporte'],
     });
   }
 

@@ -83,7 +83,7 @@ export class ClubService {
         { estado: 'activo' },
         { estado: 'inactivo' }
       ],
-      relations: ['dueno', 'canchas', 'canchas.deporte']
+      relations: ['dueno', 'canchas', 'canchas.id_deporte']
     });
     return clubs.map(club => ({
       id: club.id_club,
