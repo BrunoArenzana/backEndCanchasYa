@@ -4,13 +4,14 @@ import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { useContainer } from 'class-validator';
 
 @Controller('reserva')
 export class ReservaController {
   constructor(private readonly reservaService: ReservaService) {}
 
   @Post()
-    //@UseGuards(AuthGuard)//solo los usuarios autenticados pueden crear reservas
+  @UseGuards(AuthGuard)//solo los usuarios autenticados pueden crear reservas
   create(@Body() createReservaDto: CreateReservaDto) {
     return this.reservaService.create(createReservaDto);
   }
@@ -36,11 +37,13 @@ export class ReservaController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard) //solo los usuarios autenticados pueden actualizar reservas
   update(@Param('id') id: string, @Body() updateReservaDto: UpdateReservaDto) {
     return this.reservaService.update(+id, updateReservaDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   remove(@Param('id') id: string) {
     return this.reservaService.remove(+id);
   }

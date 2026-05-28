@@ -27,8 +27,8 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       console.log('Creando user con:', createUserDto);
-      console.log('User creado:', result);  
       const result = await this.userService.create(createUserDto);
+      console.log('User creado:', result);  
       return result;
     } catch (error) {
       console.error('Error al crear user:', error);
