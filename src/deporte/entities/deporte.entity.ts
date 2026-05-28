@@ -12,6 +12,6 @@ export class Deporte {
   @Column({ name: 'descripcion_deporte', type: 'text', nullable: true })
   descripcion_deporte: string;
 
-  @OneToMany(() => Cancha, (cancha) => cancha.deporte)
+  @OneToMany(() => Cancha, (cancha) => cancha.id_deporte)
   canchas: Cancha[];
 }

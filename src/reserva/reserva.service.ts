@@ -37,7 +37,7 @@ export class ReservaService {
 
   findByClub(idClub: number) {
     return this.reservaRepository.find({
-      where: { cancha: { club: { id_club: idClub } } },
+      where: { cancha: { id_club: { id_club: idClub } } },
       relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
     });
   }

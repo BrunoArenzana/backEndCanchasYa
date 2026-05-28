@@ -98,7 +98,7 @@ export class ClubService {
         id: cancha.id_cancha,
         nombre: cancha.nombre_cancha,
         precio: parseFloat(cancha.precio_por_hora as any) || 0,
-        deporte: cancha.deporte?.nombre_deporte
+        deporte: cancha.id_deporte?.nombre_deporte
       })) || []
     }));
   }

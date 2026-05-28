@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Post } from '@nestjs/common';
 import { CreateCanchaDto } from './dto/create-cancha.dto';
 import { UpdateCanchaDto } from './dto/update-cancha.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,7 +13,14 @@ export class CanchaService {
   ) {}
 
   create(createCanchaDto: CreateCanchaDto) {
-    const cancha = this.canchaRepository.create(createCanchaDto);
+    const { id_club, id_deporte, ...rest } = createCanchaDto;
+
+    const cancha = this.canchaRepository.create({
+      ...rest,
+      id_club: { id_club } as any,
+      id_deporte: { id_deporte } as any ,
+    });
+
     return this.canchaRepository.save(cancha);
   }
 
@@ -34,7 +41,7 @@ export class CanchaService {
   findByClub(idClub: number) {
     return this.canchaRepository.find({
       where: {
-        club: {
+        id_club: {
           id_club: idClub,
         },
         activa: 1,
@@ -43,8 +50,16 @@ export class CanchaService {
     });
   }
 
-  update(id: number, updateCanchaDto: UpdateCanchaDto) {
-    return this.canchaRepository.update({ id_cancha: id }, updateCanchaDto);
+  async update(id: number, updateCanchaDto: UpdateCanchaDto) {
+    const { id_club, id_deporte, ...rest } = updateCanchaDto;
+
+    const payload = {
+      ...rest,
+      ...(id_club !== undefined ? { id_club: { id_club } as any } : {}),
+      ...(id_deporte !== undefined ? { id_deporte: { id_deporte } as any } : {}),
+    };
+
+    return this.canchaRepository.update({ id_cancha: id }, payload);
   }
 
   remove(id: number) {

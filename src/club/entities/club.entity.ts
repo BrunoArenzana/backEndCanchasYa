@@ -54,7 +54,7 @@ export class Club {
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
 
-  @OneToMany(() => Cancha, (cancha) => cancha.club)
+  @OneToMany(() => Cancha, (cancha) => cancha.id_club)
   canchas!: Cancha[];
 
 }

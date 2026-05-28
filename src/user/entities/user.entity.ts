@@ -50,12 +50,7 @@ export class User {
     @CreateDateColumn({ name: 'created_at', type: 'datetime' })
     created_at!: Date;
 
-  @ManyToMany(() => Cancha, (cancha) => cancha.Interes)
-  @JoinTable({
-    name: 'cancha_usuario',
-    joinColumn: { name: 'id_usuario', referencedColumnName: 'id_usuario' },
-    inverseJoinColumn: { name: 'id_cancha', referencedColumnName: 'id_cancha' },
-  })
+
   canchas!: Cancha[];
 
   @OneToMany(() => Reserva, (reserva) => reserva.usuario)

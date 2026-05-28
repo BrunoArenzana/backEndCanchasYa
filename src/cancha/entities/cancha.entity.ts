@@ -36,18 +36,15 @@ export class Cancha {
 
   @ManyToOne(() => Club, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_club' })
-  club!: Club;
+  id_club!: Club;
 
   @ManyToOne(() => Deporte, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_deporte' })
-  deporte!: Deporte;
+  id_deporte!: Deporte;
 
   @OneToMany(() => Reserva, (reserva) => reserva.cancha)
   reservas!: Reserva[];
 
   @OneToMany(() => Disponibilidad, (disponibilidad) => disponibilidad.cancha)
   disponibilidades!: Disponibilidad[];
-
-  @ManyToMany(() => User, (user) => user.canchas)
-  Interes!: User[];
 }
