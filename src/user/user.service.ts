@@ -157,8 +157,8 @@ export class UserService {
           ciudad_cancha: data.ciudad,
           provincia_cancha: data.provincia,
           cp_cancha: data.cp,
-          club: savedClub,
-          deporte,
+          id_club: savedClub,
+          id_deporte: deporte,
         });
 
         await queryRunner.manager.save(cancha);
