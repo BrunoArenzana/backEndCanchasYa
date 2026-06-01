@@ -1,0 +1,9 @@
+
+  {
+  "window.title": "🟢 BACK END - ${rootName}",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#1e7e34",
+    "titleBar.activeForeground": "#ffffff",
+    "workbench.iconTheme": "material-icon-theme"
+  }
+}

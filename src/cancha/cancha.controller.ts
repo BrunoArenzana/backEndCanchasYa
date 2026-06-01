@@ -17,6 +17,11 @@ export class CanchaController {
     return this.canchaService.findAll();
   }
 
+  @Get('club/:idClub')
+  findByClub(@Param('idClub') idClub: string) {
+    return this.canchaService.findByClub(+idClub);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.canchaService.findOne(+id);

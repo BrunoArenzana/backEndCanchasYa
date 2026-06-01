@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany } from 'typeorm';
 import { Club } from '../../club/entities/club.entity';
 import { Deporte } from '../../deporte/entities/deporte.entity';
 import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity('cancha')
 export class Cancha {
@@ -15,19 +16,31 @@ export class Cancha {
   @Column({ name: 'descripcion_cancha', type: 'text', nullable: true })
   descripcion_cancha!: string;
 
-  @Column({ name: 'precio_por_hora', type: 'decimal', precision: 10, scale: 2 })
+  @Column({ name: 'precio_por_hora', type: 'decimal', precision: 10, scale: 2, default: 0 })
   precio_por_hora!: number;
 
   @Column({ name: 'activa', type: 'tinyint', default: 1 })
   activa!: number;
 
+  @Column({ name: 'direccion_cancha', type: 'varchar', length: 255, nullable: true })
+  direccion_cancha!: string;
+
+  @Column({ name: 'ciudad_cancha', type: 'varchar', length: 100, nullable: true })
+  ciudad_cancha!: string;
+
+  @Column({ name: 'provincia_cancha', type: 'varchar', length: 100, nullable: true })
+  provincia_cancha!: string;
+
+  @Column({ name: 'cp_cancha', type: 'varchar', length: 20, nullable: true })
+  cp_cancha!: string;
+
   @ManyToOne(() => Club, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_club' })
-  club!: Club;
+  id_club!: Club;
 
   @ManyToOne(() => Deporte, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_deporte' })
-  deporte!: Deporte;
+  id_deporte!: Deporte;
 
   @OneToMany(() => Reserva, (reserva) => reserva.cancha)
   reservas!: Reserva[];
