@@ -92,6 +92,7 @@ export class AuthService {
       sub: result.user.id_usuario,
       email: result.user.email,
       tipo: result.user.tipo,
+      role: result.user.tipo, // Asumiendo que el tipo de usuario también define su rol
     };
 
     const token = await this.jwtService.signAsync(payload);
