@@ -7,6 +7,7 @@ import { Club } from '../club/entities/club.entity';
 import { Cancha } from '../cancha/entities/cancha.entity';
 import { Deporte } from '../deporte/entities/deporte.entity';
 import { Repository, DataSource } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 
 
 
@@ -22,40 +23,42 @@ export class UserService {
     private dataSource: DataSource,
   ) {}
 
-   async create(createUserDto: CreateUserDto) {
-     try {
-       const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
-       // Admin users should be active immediately, dueno users pendiente_aprobacion, regular users activo
-       const estado = tipo === 'usuario' ? 'activo' : (tipo === 'dueno' ? 'pendiente_aprobacion' : 'activo');
+async create(createUserDto: CreateUserDto) {
+  try {
+    const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
+    const estado =
+      tipo === 'usuario'
+        ? 'activo'
+        : tipo === 'dueno'
+        ? 'pendiente_aprobacion'
+        : 'activo';
 
-       console.log('UserService.create - Datos:', { ...createUserDto, tipo, estado });
+    const user = this.userRepository.create({
+      ...createUserDto,
+      tipo_usuario: tipo,
+      estado_usuario: estado,
+    });
 
-       const user = this.userRepository.create({
-         ...createUserDto,
-         tipo_usuario: tipo,
-         estado_usuario: estado,
-       });
+    const saved = await this.userRepository.save(user);
 
-       console.log('UserService.create - User object:', user);
+    return {
+      id_usuario: saved.id_usuario,
+      nombre_usuario: saved.nombre_usuario,
+      apellido_usuario: saved.apellido_usuario,
+      email_usuario: saved.email_usuario,
+      tipo_usuario: saved.tipo_usuario,
+      estado_usuario: saved.estado_usuario,
+      created_at: saved.created_at,
+    };
+  } catch (error) {
+    // 👇 ESTE ES EL CAMBIO CLAVE
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ER_DUP_ENTRY') {
+      throw new BadRequestException('El email ya está registrado');
+    }
 
-       const saved = await this.userRepository.save(user);
-       console.log('UserService.create - Guardado exitosamente:', saved);
-       
-       // Return with explicit field mapping to ensure frontend receives all needed fields
-       return {
-         id_usuario: saved.id_usuario,
-         nombre_usuario: saved.nombre_usuario,
-         apellido_usuario: saved.apellido_usuario,
-         email_usuario: saved.email_usuario,
-         tipo_usuario: saved.tipo_usuario,
-         estado_usuario: saved.estado_usuario,
-         created_at: saved.created_at,
-       };
-     } catch (error) {
-       console.error('UserService.create - Error:', error);
-       throw error;
-     }
-   }
+    throw new BadRequestException('Error al crear usuario');
+  }
+}
 
   findAll() {
     return this.userRepository.find({

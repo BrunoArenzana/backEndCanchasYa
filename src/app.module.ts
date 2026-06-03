@@ -11,6 +11,7 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
+import { GeorefModule } from './georef/georef.module';
 
 
 @Module({
@@ -53,6 +54,7 @@ import { UserModule } from './user/user.module';
         DisponibilidadModule,
         MailModule,
         UserModule,
+        GeorefModule,
     ],
     controllers: [],
     providers: [],
