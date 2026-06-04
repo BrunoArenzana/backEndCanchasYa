@@ -53,18 +53,14 @@ export class CanchaService {
     return this.normalizarCancha(cancha);
   }
 
-  async findByClub(idClub: number) {
-    const canchas = await this.canchaRepository.find({
-      where: {
-        id_club: {
-          id_club: idClub,
-        },
-        activa: 1,
-      },
-      relations: ['id_club', 'id_deporte'],
-    });
-
-    return canchas.map((cancha) => this.normalizarCancha(cancha));
+  findByClub(idClub: number) {
+    return this.canchaRepository
+      .createQueryBuilder('cancha')
+      .leftJoinAndSelect('cancha.id_club', 'club')
+      .leftJoinAndSelect('cancha.id_deporte', 'deporte')
+      .where('cancha.id_club = :idClub', { idClub })
+      .andWhere('cancha.activa = :activa', { activa: 1 })
+      .getMany();
   }
 
   async update(id: number, updateCanchaDto: UpdateCanchaDto) {
