@@ -8,15 +8,17 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 
 @Controller('user')
@@ -37,6 +39,8 @@ export class UserController {
   }
 
   @Post('create-admin')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('Admin') // Asegura que solo usuarios autenticados puedan crear admins@
   async createAdmin(@Body() createUserDto: CreateUserDto) {
     // Forzar el tipo a admin para asegurar que se cree como administrador
     createUserDto.tipo_usuario = 'admin';
