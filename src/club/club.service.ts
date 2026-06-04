@@ -83,7 +83,7 @@ export class ClubService {
         { estado: 'activo' },
         { estado: 'inactivo' }
       ],
-      relations: ['dueno', 'canchas', 'canchas.deporte']
+      relations: ['dueno', 'canchas', 'canchas.id_deporte']
     });
     return clubs.map(club => ({
       id: club.id_club,
@@ -98,7 +98,7 @@ export class ClubService {
         id: cancha.id_cancha,
         nombre: cancha.nombre_cancha,
         precio: parseFloat(cancha.precio_por_hora as any) || 0,
-        deporte: cancha.deporte?.nombre_deporte
+        deporte: cancha.id_deporte?.nombre_deporte
       })) || []
     }));
   }

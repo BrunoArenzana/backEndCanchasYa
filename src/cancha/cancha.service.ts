@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Post } from '@nestjs/common';
 import { CreateCanchaDto } from './dto/create-cancha.dto';
 import { UpdateCanchaDto } from './dto/update-cancha.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,18 +13,21 @@ export class CanchaService {
   ) {}
 
   create(createCanchaDto: CreateCanchaDto) {
+    const { id_club, id_deporte, ...rest } = createCanchaDto;
+
     const cancha = this.canchaRepository.create({
-      ...createCanchaDto,
-      club: { id_club: createCanchaDto.id_club },
-      deporte: { id_deporte: createCanchaDto.id_deporte },
+      ...rest,
+      id_club: { id_club } as any,
+      id_deporte: { id_deporte } as any ,
     });
+
     return this.canchaRepository.save(cancha);
   }
 
 
   findAll() {
     return this.canchaRepository.find({
-      relations: ['club', 'deporte'],
+      relations: ['id_club', 'id_deporte'],
       where: { activa: 1 },
     });
   }
@@ -32,24 +35,32 @@ export class CanchaService {
   findOne(id: number) {
     return this.canchaRepository.findOne({
       where: { id_cancha: id },
-      relations: ['club', 'deporte'],
+      relations: ['id_club', 'id_deporte'],
     });
   }
 
   findByClub(idClub: number) {
     return this.canchaRepository.find({
       where: {
-        club: {
+        id_club: {
           id_club: idClub,
         },
         activa: 1,
       },
-      relations: ['club', 'deporte'],
+      relations: ['id_club', 'id_deporte'],
     });
   }
 
-  update(id: number, updateCanchaDto: UpdateCanchaDto) {
-    return this.canchaRepository.update({ id_cancha: id }, updateCanchaDto);
+  async update(id: number, updateCanchaDto: UpdateCanchaDto) {
+    const { id_club, id_deporte, ...rest } = updateCanchaDto;
+
+    const payload = {
+      ...rest,
+      ...(id_club !== undefined ? { id_club: { id_club } as any } : {}),
+      ...(id_deporte !== undefined ? { id_deporte: { id_deporte } as any } : {}),
+    };
+
+    return this.canchaRepository.update({ id_cancha: id }, payload);
   }
 
   remove(id: number) {

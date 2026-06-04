@@ -30,7 +30,7 @@ export class UserController {
     try {
       console.log('Creando user con:', createUserDto);
       const result = await this.userService.create(createUserDto);
-      console.log('User creado:', result);  
+      console.log('User creado:', result);
       return result;
     } catch (error) {
       console.error('Error al crear user:', error);

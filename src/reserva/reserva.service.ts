@@ -24,28 +24,28 @@ export class ReservaService {
 
   findAll() {
     return this.reservaRepository.find({
-      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+      relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
     });
   }
 
   findByUsuario(idUsuario: number) {
     return this.reservaRepository.find({
       where: { usuario: { id_usuario: idUsuario } },
-      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+      relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
     });
   }
 
   findByClub(idClub: number) {
     return this.reservaRepository.find({
-      where: { cancha: { club: { id_club: idClub } } },
-      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+      where: { cancha: { id_club: { id_club: idClub } } },
+      relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
     });
   }
 
   findOne(id: number) {
     return this.reservaRepository.findOne({
       where: { id_reserva: id },
-      relations: ['usuario', 'cancha', 'cancha.club', 'cancha.deporte']
+      relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
     });
   }
 

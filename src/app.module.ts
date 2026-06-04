@@ -10,6 +10,7 @@ import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
+import { GeorefModule } from './georef/georef.module';
 import { AuthModule } from './auth/auth.module'
 import { RolesGuard } from './auth/guard/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
@@ -54,6 +55,7 @@ import { APP_GUARD } from '@nestjs/core';
         DisponibilidadModule,
         MailModule,
         UserModule,
+        GeorefModule,
         AuthModule,
     ],
     controllers: [],
