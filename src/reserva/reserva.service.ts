@@ -19,10 +19,10 @@ export class ReservaService {
       ...reserva,
       cancha: reserva.cancha
         ? {
-            ...reserva.cancha,
-            club: reserva.cancha.id_club,
-            deporte: reserva.cancha.id_deporte,
-          }
+          ...reserva.cancha,
+          club: reserva.cancha.id_club,
+          deporte: reserva.cancha.id_deporte,
+        }
         : reserva.cancha,
     };
   }
@@ -60,6 +60,18 @@ export class ReservaService {
       where: { cancha: { id_club: { id_club: idClub } } },
       relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
     });
+
+    if (reservas.length === 0) {
+      // Fallback query with QueryBuilder if the nested where clause failed
+      const queryReservas = await this.reservaRepository.createQueryBuilder('reserva')
+        .leftJoinAndSelect('reserva.usuario', 'usuario')
+        .leftJoinAndSelect('reserva.cancha', 'cancha')
+        .leftJoinAndSelect('cancha.id_club', 'club')
+        .leftJoinAndSelect('cancha.id_deporte', 'deporte')
+        .where('cancha.id_club = :idClub', { idClub })
+        .getMany();
+      return queryReservas.map((reserva) => this.normalizarReserva(reserva));
+    }
 
     return reservas.map((reserva) => this.normalizarReserva(reserva));
   }
