@@ -39,7 +39,7 @@ export class Club {
     name: 'estado',
     type: 'enum',
     enum: ['activo', 'inactivo', 'pendiente_aprobacion'],
-    default: 'pendiente_aprobacion'
+    default: 'activo'//corregir esto, es pr
   })
   estado!: string;
 
@@ -53,6 +53,7 @@ export class Club {
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
+
 
   @OneToMany(() => Cancha, (cancha) => cancha.id_club)
   canchas!: Cancha[];

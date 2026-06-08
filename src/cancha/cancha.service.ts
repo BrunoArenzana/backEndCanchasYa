@@ -24,6 +24,7 @@ export class CanchaService {
     return this.canchaRepository.save(cancha);
   }
 
+
   findAll() {
     return this.canchaRepository.find({
       relations: ['id_club', 'id_deporte'],
