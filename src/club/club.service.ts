@@ -94,7 +94,7 @@ export class ClubService {
       direccion: club.direccion_club,
       logo: club.logo_club,
       activo: club.estado === 'activo',
-      detallesCanchas: club.canchas?.map(cancha => ({
+      detallesCanchas: club.canchas?.filter(cancha => cancha.activa === 1).map(cancha => ({
         id: cancha.id_cancha,
         nombre: cancha.nombre_cancha,
         precio: parseFloat(cancha.precio_por_hora as any) || 0,

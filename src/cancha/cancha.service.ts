@@ -12,7 +12,17 @@ export class CanchaService {
     private canchaRepository: Repository<Cancha>,
   ) {}
 
-  create(createCanchaDto: CreateCanchaDto) {
+  private normalizarCancha(cancha: Cancha | null) {
+    if (!cancha) return null;
+
+    return {
+      ...cancha,
+      club: cancha.id_club,
+      deporte: cancha.id_deporte,
+    };
+  }
+
+  async create(createCanchaDto: CreateCanchaDto) {
     const { id_club, id_deporte, ...rest } = createCanchaDto;
 
     const cancha = this.canchaRepository.create({
@@ -21,34 +31,36 @@ export class CanchaService {
       id_deporte: { id_deporte } as any ,
     });
 
-    return this.canchaRepository.save(cancha);
+    const canchaGuardada = await this.canchaRepository.save(cancha);
+    return this.findOne(canchaGuardada.id_cancha);
   }
 
-
-  findAll() {
-    return this.canchaRepository.find({
+  async findAll() {
+    const canchas = await this.canchaRepository.find({
       relations: ['id_club', 'id_deporte'],
       where: { activa: 1 },
     });
+
+    return canchas.map((cancha) => this.normalizarCancha(cancha));
   }
 
-  findOne(id: number) {
-    return this.canchaRepository.findOne({
+  async findOne(id: number) {
+    const cancha = await this.canchaRepository.findOne({
       where: { id_cancha: id },
       relations: ['id_club', 'id_deporte'],
     });
+
+    return this.normalizarCancha(cancha);
   }
 
   findByClub(idClub: number) {
-    return this.canchaRepository.find({
-      where: {
-        id_club: {
-          id_club: idClub,
-        },
-        activa: 1,
-      },
-      relations: ['id_club', 'id_deporte'],
-    });
+    return this.canchaRepository
+      .createQueryBuilder('cancha')
+      .leftJoinAndSelect('cancha.id_club', 'club')
+      .leftJoinAndSelect('cancha.id_deporte', 'deporte')
+      .where('cancha.id_club = :idClub', { idClub })
+      .andWhere('cancha.activa = :activa', { activa: 1 })
+      .getMany();
   }
 
   async update(id: number, updateCanchaDto: UpdateCanchaDto) {

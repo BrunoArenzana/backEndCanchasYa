@@ -23,3 +23,5 @@
     "noFallthroughCasesInSwitch": false,
   }
 }
+
+//npm run seed para generar datos de prueba en la base de datos, luego npm run start para iniciar el servidor.
