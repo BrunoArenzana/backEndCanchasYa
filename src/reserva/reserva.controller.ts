@@ -5,7 +5,6 @@ import { UpdateReservaDto } from './dto/update-reserva.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { useContainer } from 'class-validator';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 
 @Controller('reserva')
@@ -50,7 +49,7 @@ export class ReservaController {
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard) //solo los usuarios autenticados con rol admin pueden eliminar reservas
-  @Roles('usuario')
+  @Roles('usuario', 'admin')
   remove(@Param('id') id: string) {
     return this.reservaService.remove(+id);
   }

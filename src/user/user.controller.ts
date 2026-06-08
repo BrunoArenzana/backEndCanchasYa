@@ -40,7 +40,7 @@ export class UserController {
 
   @Post('create-admin')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('Admin') // Asegura que solo usuarios autenticados puedan crear admins@
+  @Roles('admin') // Asegura que solo usuarios autenticados puedan crear admins@
   async createAdmin(@Body() createUserDto: CreateUserDto) {
     // Forzar el tipo a admin para asegurar que se cree como administrador
     createUserDto.tipo_usuario = 'admin';
@@ -68,21 +68,29 @@ export class UserController {
 
 
   @Get()
+@UseGuards(AuthGuard, RolesGuard)
+@Roles('admin')
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin', 'dueno', 'usuario', 'club') // Permitir que admins, dueños y usuarios puedan actualizar su propia información
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin') // Solo los admins pueden eliminar usuarios
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
