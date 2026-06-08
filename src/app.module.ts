@@ -7,12 +7,14 @@ import { PagoModule } from './pago/pago.module';
 import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
-
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
-
-
+import { GeorefModule } from './georef/georef.module';
+import { AuthModule } from './auth/auth.module'
+import { RolesGuard } from './auth/guard/roles.guard';
+import { APP_GUARD } from '@nestjs/core';
+    
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -22,7 +24,7 @@ import { UserModule } from './user/user.module';
             type: 'mysql',
             host: process.env.DB_HOST,
             port: Number(process.env.DB_PORT),
-            username: process.env.DB_USERNAME,
+            username: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
             autoLoadEntities: true,
@@ -53,8 +55,11 @@ import { UserModule } from './user/user.module';
         DisponibilidadModule,
         MailModule,
         UserModule,
+        GeorefModule,
+        AuthModule,
     ],
     controllers: [],
-    providers: [],
+    providers: [/*{ provide: APP_GUARD , useClass: RolesGuard }*/],
+    
 })
 export class AppModule { }

@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CanchaService } from './cancha.service';
 import { CanchaController } from './cancha.controller';
 import { Cancha } from './entities/cancha.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Cancha])],
+  imports: [JwtModule, TypeOrmModule.forFeature([Cancha])],
   controllers: [CanchaController],
   providers: [CanchaService],
 })
