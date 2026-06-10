@@ -25,6 +25,34 @@ export class UserService {
 
 async create(createUserDto: CreateUserDto) {
   try {
+    // 👇 VALIDACIÓN PREVIA DE DUPLICADOS
+    if (createUserDto.email_usuario) {
+      const existingEmail = await this.userRepository.findOne({
+        where: { email_usuario: createUserDto.email_usuario }
+      });
+      if (existingEmail) {
+        throw new BadRequestException('El email ya está registrado');
+      }
+    }
+
+    if (createUserDto.dni_usuario) {
+      const existingDni = await this.userRepository.findOne({
+        where: { dni_usuario: createUserDto.dni_usuario }
+      });
+      if (existingDni) {
+        throw new BadRequestException('El DNI ya está registrado');
+      }
+    }
+
+    if (createUserDto.CUIT_usuario) {
+      const existingCuit = await this.userRepository.findOne({
+        where: { CUIT_usuario: createUserDto.CUIT_usuario }
+      });
+      if (existingCuit) {
+        throw new BadRequestException('El CUIT ya está registrado');
+      }
+    }
+
     const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
     const estado =
       tipo === 'usuario'
@@ -51,11 +79,12 @@ async create(createUserDto: CreateUserDto) {
       created_at: saved.created_at,
     };
   } catch (error) {
-    // 👇 ESTE ES EL CAMBIO CLAVE
-    if (error && typeof error === 'object' && 'code' in error && error.code === 'ER_DUP_ENTRY') {
-      throw new BadRequestException('El email ya está registrado');
+    // Si ya es una BadRequestException, la relanzamos
+    if (error instanceof BadRequestException) {
+      throw error;
     }
 
+    // Para cualquier otro error
     throw new BadRequestException('Error al crear usuario');
   }
 }
@@ -85,6 +114,36 @@ async create(createUserDto: CreateUserDto) {
   }
 
   async createWithClub(data: any, file?: any) {
+    // 👇 VALIDACIÓN PREVIA DE DUPLICADOS
+    if (data.email) {
+      const existingEmail = await this.userRepository.findOne({
+        where: { email_usuario: data.email }
+      });
+      if (existingEmail) {
+        throw new BadRequestException('El email ya está registrado');
+      }
+    }
+
+    const normalizedCuit = (data.CUIT || data.cuit || '').toString().trim();
+    if (normalizedCuit) {
+      const existingCuit = await this.userRepository.findOne({
+        where: { CUIT_usuario: normalizedCuit }
+      });
+      if (existingCuit) {
+        throw new BadRequestException('El CUIT ya está registrado');
+      }
+    }
+
+    const normalizedDni = ((data.DNI || data.dni) || '').toString().trim();
+    if (normalizedDni) {
+      const existingDni = await this.userRepository.findOne({
+        where: { dni_usuario: normalizedDni }
+      });
+      if (existingDni) {
+        throw new BadRequestException('El DNI ya está registrado');
+      }
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -177,21 +236,9 @@ async create(createUserDto: CreateUserDto) {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       
-      // 👇 VALIDACIÓN DE ERRORES DE DUPLICADOS
-      if (error && typeof error === 'object' && 'code' in error && error.code === 'ER_DUP_ENTRY') {
-        const duplicateField = error.message || '';
-        
-        if (duplicateField.includes('email_usuario')) {
-          throw new BadRequestException('El email ya está registrado');
-        }
-        if (duplicateField.includes('CUIT_usuario')) {
-          throw new BadRequestException('El CUIT ya está registrado');
-        }
-        if (duplicateField.includes('dni_usuario')) {
-          throw new BadRequestException('El DNI ya está registrado');
-        }
-        
-        throw new BadRequestException('Este registro ya existe en el sistema');
+      // Si ya es una BadRequestException de validación previa, la relanzamos
+      if (error instanceof BadRequestException) {
+        throw error;
       }
       
       throw error;
