@@ -51,9 +51,21 @@ async create(createUserDto: CreateUserDto) {
       created_at: saved.created_at,
     };
   } catch (error) {
-    // 👇 ESTE ES EL CAMBIO CLAVE
+    // 👇 VALIDACIÓN MEJORADA DE ERRORES DE DUPLICADOS
     if (error && typeof error === 'object' && 'code' in error && error.code === 'ER_DUP_ENTRY') {
-      throw new BadRequestException('El email ya está registrado');
+      const errorMessage = error.sqlMessage || error.message || '';
+      
+      if (errorMessage.includes('email_usuario')) {
+        throw new BadRequestException('El email ya está registrado');
+      }
+      if (errorMessage.includes('dni_usuario')) {
+        throw new BadRequestException('El DNI ya está registrado');
+      }
+      if (errorMessage.includes('CUIT_usuario')) {
+        throw new BadRequestException('El CUIT ya está registrado');
+      }
+      
+      throw new BadRequestException('Este registro ya existe en el sistema');
     }
 
     throw new BadRequestException('Error al crear usuario');
