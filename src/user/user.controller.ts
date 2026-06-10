@@ -62,8 +62,13 @@ export class UserController {
       }),
     }),
   )
-  createWithClub(@Body() body: any, @UploadedFile() file: any) {
-    return this.userService.createWithClub(body, file);
+  async createWithClub(@Body() body: any, @UploadedFile() file: any) {
+    try {
+      return await this.userService.createWithClub(body, file);
+    } catch (error) {
+      console.error('Error en registro de club:', error);
+      throw error;
+    }
   }
 
 

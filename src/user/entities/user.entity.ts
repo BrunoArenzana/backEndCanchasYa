@@ -14,7 +14,7 @@ export class User {
     email_usuario!: string;
     @Column({ name: 'dni_usuario', type: 'varchar', length: 20, unique: true, nullable: true })
     dni_usuario!: string | null;
-    @Column({ name: 'CUIT_usuario', type: 'varchar', length: 20, nullable: true })
+    @Column({ name: 'CUIT_usuario', type: 'varchar', length: 20, nullable: true, unique: true })
     CUIT_usuario!: string;
     @Column({ name: 'password_usuario', type: 'varchar', length: 255 })
     password_usuario!: string;

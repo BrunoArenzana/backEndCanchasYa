@@ -176,6 +176,24 @@ async create(createUserDto: CreateUserDto) {
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      
+      // 👇 VALIDACIÓN DE ERRORES DE DUPLICADOS
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ER_DUP_ENTRY') {
+        const duplicateField = error.message || '';
+        
+        if (duplicateField.includes('email_usuario')) {
+          throw new BadRequestException('El email ya está registrado');
+        }
+        if (duplicateField.includes('CUIT_usuario')) {
+          throw new BadRequestException('El CUIT ya está registrado');
+        }
+        if (duplicateField.includes('dni_usuario')) {
+          throw new BadRequestException('El DNI ya está registrado');
+        }
+        
+        throw new BadRequestException('Este registro ya existe en el sistema');
+      }
+      
       throw error;
     } finally {
       await queryRunner.release();
