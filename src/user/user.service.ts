@@ -7,6 +7,7 @@ import { Club } from '../club/entities/club.entity';
 import { Cancha } from '../cancha/entities/cancha.entity';
 import { Deporte } from '../deporte/entities/deporte.entity';
 import { Repository, DataSource } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 
 
 
@@ -22,40 +23,71 @@ export class UserService {
     private dataSource: DataSource,
   ) {}
 
-   async create(createUserDto: CreateUserDto) {
-     try {
-       const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
-       // Admin users should be active immediately, dueno users pendiente_aprobacion, regular users activo
-       const estado = tipo === 'usuario' ? 'activo' : (tipo === 'dueno' ? 'pendiente_aprobacion' : 'activo');
+async create(createUserDto: CreateUserDto) {
+  try {
+    // 👇 VALIDACIÓN PREVIA DE DUPLICADOS
+    if (createUserDto.email_usuario) {
+      const existingEmail = await this.userRepository.findOne({
+        where: { email_usuario: createUserDto.email_usuario }
+      });
+      if (existingEmail) {
+        throw new BadRequestException('El email ya está registrado');
+      }
+    }
 
-       console.log('UserService.create - Datos:', { ...createUserDto, tipo, estado });
+    if (createUserDto.dni_usuario) {
+      const existingDni = await this.userRepository.findOne({
+        where: { dni_usuario: createUserDto.dni_usuario }
+      });
+      if (existingDni) {
+        throw new BadRequestException('El DNI ya está registrado');
+      }
+    }
 
-       const user = this.userRepository.create({
-         ...createUserDto,
-         tipo_usuario: tipo,
-         estado_usuario: estado,
-       });
+    if (createUserDto.CUIT_usuario) {
+      const existingCuit = await this.userRepository.findOne({
+        where: { CUIT_usuario: createUserDto.CUIT_usuario }
+      });
+      if (existingCuit) {
+        throw new BadRequestException('El CUIT ya está registrado');
+      }
+    }
 
-       console.log('UserService.create - User object:', user);
+    const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
+    const estado =
+      tipo === 'usuario'
+        ? 'activo'
+        : tipo === 'dueno'
+        ? 'pendiente_aprobacion'
+        : 'activo';
 
-       const saved = await this.userRepository.save(user);
-       console.log('UserService.create - Guardado exitosamente:', saved);
-       
-       // Return with explicit field mapping to ensure frontend receives all needed fields
-       return {
-         id_usuario: saved.id_usuario,
-         nombre_usuario: saved.nombre_usuario,
-         apellido_usuario: saved.apellido_usuario,
-         email_usuario: saved.email_usuario,
-         tipo_usuario: saved.tipo_usuario,
-         estado_usuario: saved.estado_usuario,
-         created_at: saved.created_at,
-       };
-     } catch (error) {
-       console.error('UserService.create - Error:', error);
-       throw error;
-     }
-   }
+    const user = this.userRepository.create({
+      ...createUserDto,
+      tipo_usuario: tipo,
+      estado_usuario: estado,
+    });
+
+    const saved = await this.userRepository.save(user);
+
+    return {
+      id_usuario: saved.id_usuario,
+      nombre_usuario: saved.nombre_usuario,
+      apellido_usuario: saved.apellido_usuario,
+      email_usuario: saved.email_usuario,
+      tipo_usuario: saved.tipo_usuario,
+      estado_usuario: saved.estado_usuario,
+      created_at: saved.created_at,
+    };
+  } catch (error) {
+    // Si ya es una BadRequestException, la relanzamos
+    if (error instanceof BadRequestException) {
+      throw error;
+    }
+
+    // Para cualquier otro error
+    throw new BadRequestException('Error al crear usuario');
+  }
+}
 
   findAll() {
     return this.userRepository.find({
@@ -82,6 +114,36 @@ export class UserService {
   }
 
   async createWithClub(data: any, file?: any) {
+    // 👇 VALIDACIÓN PREVIA DE DUPLICADOS
+    if (data.email) {
+      const existingEmail = await this.userRepository.findOne({
+        where: { email_usuario: data.email }
+      });
+      if (existingEmail) {
+        throw new BadRequestException('El email ya está registrado');
+      }
+    }
+
+    const normalizedCuit = (data.CUIT || data.cuit || '').toString().trim();
+    if (normalizedCuit) {
+      const existingCuit = await this.userRepository.findOne({
+        where: { CUIT_usuario: normalizedCuit }
+      });
+      if (existingCuit) {
+        throw new BadRequestException('El CUIT ya está registrado');
+      }
+    }
+
+    const normalizedDni = ((data.DNI || data.dni) || '').toString().trim();
+    if (normalizedDni) {
+      const existingDni = await this.userRepository.findOne({
+        where: { dni_usuario: normalizedDni }
+      });
+      if (existingDni) {
+        throw new BadRequestException('El DNI ya está registrado');
+      }
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -173,6 +235,12 @@ export class UserService {
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      
+      // Si ya es una BadRequestException de validación previa, la relanzamos
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      
       throw error;
     } finally {
       await queryRunner.release();

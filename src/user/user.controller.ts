@@ -8,15 +8,17 @@ import {
   Delete,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 
 @Controller('user')
@@ -37,6 +39,8 @@ export class UserController {
   }
 
   @Post('create-admin')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin') // Asegura que solo usuarios autenticados puedan crear admins@
   async createAdmin(@Body() createUserDto: CreateUserDto) {
     // Forzar el tipo a admin para asegurar que se cree como administrador
     createUserDto.tipo_usuario = 'admin';
@@ -58,27 +62,40 @@ export class UserController {
       }),
     }),
   )
-  createWithClub(@Body() body: any, @UploadedFile() file: any) {
-    return this.userService.createWithClub(body, file);
+  async createWithClub(@Body() body: any, @UploadedFile() file: any) {
+    try {
+      return await this.userService.createWithClub(body, file);
+    } catch (error) {
+      console.error('Error en registro de club:', error);
+      throw error;
+    }
   }
 
 
   @Get()
+@UseGuards(AuthGuard, RolesGuard)
+@Roles('admin')
   findAll() {
     return this.userService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin', 'dueno', 'usuario', 'club') // Permitir que admins, dueños y usuarios puedan actualizar su propia información
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin') // Solo los admins pueden eliminar usuarios
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }

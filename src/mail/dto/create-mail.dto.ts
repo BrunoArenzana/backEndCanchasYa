@@ -4,6 +4,9 @@ export class MailDto {
   @IsString()
   nombre!: string;
 
+  @IsString()
+  razonSocial!: string;
+
   @IsEmail()
   email!: string;
 

@@ -5,6 +5,7 @@ import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
 import { User } from 'src/user/entities/user.entity';
 
+
 @Entity('cancha')
 export class Cancha {
   @PrimaryGeneratedColumn({ name: 'id_cancha' })
@@ -17,10 +18,10 @@ export class Cancha {
   descripcion_cancha!: string;
 
   @Column({ name: 'precio_por_hora', type: 'decimal', precision: 10, scale: 2, default: 0 })
-  precio_por_hora!: number;
+  precio_por_hora?: number;
 
   @Column({ name: 'activa', type: 'tinyint', default: 1 })
-  activa!: number;
+  activa?: number;
 
   @Column({ name: 'direccion_cancha', type: 'varchar', length: 255, nullable: true })
   direccion_cancha!: string;

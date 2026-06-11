@@ -37,6 +37,12 @@ export class MailService {
         '{{nombre}}',
         data.nombre,
       );
+      htmlContent = htmlContent.replace(
+        '{{razonSocial}}',  
+        data.razonSocial,
+      );
+    
+
 
       await this.mailerService.sendMail({
         to: data.email,

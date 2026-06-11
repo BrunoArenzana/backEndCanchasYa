@@ -4,9 +4,11 @@ import { ClubService } from './club.service';
 import { ClubController } from './club.controller';
 import { Club } from './entities/club.entity';
 import { User } from '../user/entities/user.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule,
     TypeOrmModule.forFeature([Club, User]),
   ],
   controllers: [ClubController],
