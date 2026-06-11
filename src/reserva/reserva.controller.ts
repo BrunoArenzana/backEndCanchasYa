@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException } from '@nestjs/common';
 import { ReservaService } from './reserva.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
@@ -38,20 +38,26 @@ export class ReservaController {
   @Get(':id')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden ver una reserva específica
   findOne(@Param('id') id: string) {
-    return this.reservaService.findOne(+id);
+    const numericId = +id;
+    if (isNaN(numericId)) throw new BadRequestException('ID inválido');
+    return this.reservaService.findOne(numericId);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden actualizar reservas
   update(@Param('id') id: string, @Body() updateReservaDto: UpdateReservaDto) {
-    return this.reservaService.update(+id, updateReservaDto);
+    const numericId = +id;
+    if (isNaN(numericId)) throw new BadRequestException('ID inválido');
+    return this.reservaService.update(numericId, updateReservaDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard) //solo los usuarios autenticados con rol admin pueden eliminar reservas
   @Roles('usuario', 'admin')
   remove(@Param('id') id: string) {
-    return this.reservaService.remove(+id);
+    const numericId = +id;
+    if (isNaN(numericId)) throw new BadRequestException('ID inválido');
+    return this.reservaService.remove(numericId);
   }
 
 }
