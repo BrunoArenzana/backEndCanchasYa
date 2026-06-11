@@ -16,57 +16,57 @@ const mysql = require('mysql2/promise');
 // Datos de ejemplo para los clubes
 const clubesData = [
   {
-    nombre: 'Club Deportivo Central',
+    nombre: 'Club Deportivo 1',
     email: 'Club1@gmail.com',
     deportes: ['Fútbol 5', 'Básquet', 'Tenis'],
     canchas: [
-      { nombre: 'Cancha 1 - Fútbol 5', deporte: 'Fútbol 5', precio: 500 },
-      { nombre: 'Cancha 2 - Fútbol 5', deporte: 'Fútbol 5', precio: 500 },
-      { nombre: 'Cancha de Básquet', deporte: 'Básquet', precio: 400 },
-      { nombre: 'Cancha de Tenis', deporte: 'Tenis', precio: 600 },
+      { nombre: 'Cancha 1 - Fútbol 5', deporte: 'Fútbol 5', precio: 20000 },
+      { nombre: 'Cancha 2 - Fútbol 5', deporte: 'Fútbol 5', precio: 20000 },
+      { nombre: 'Cancha de Básquet', deporte: 'Básquet', precio: 15000 },
+      { nombre: 'Cancha de Tenis', deporte: 'Tenis', precio: 12000 },
     ]
   },
   {
-    nombre: 'Club Multideporte San Martín',
+    nombre: 'Club Deportivo 2',
     email: 'Club2@gmail.com',
     deportes: ['Fútbol 7', 'Vóley', 'Pádel'],
     canchas: [
-      { nombre: 'Cancha de Fútbol 7', deporte: 'Fútbol 7', precio: 700 },
-      { nombre: 'Cancha de Vóley', deporte: 'Vóley', precio: 450 },
-      { nombre: 'Cancha de Pádel 1', deporte: 'Pádel', precio: 550 },
-      { nombre: 'Cancha de Pádel 2', deporte: 'Pádel', precio: 550 },
+      { nombre: 'Cancha de Fútbol 7', deporte: 'Fútbol 7', precio: 20000 },
+      { nombre: 'Cancha de Vóley', deporte: 'Vóley', precio: 15000 },
+      { nombre: 'Cancha de Pádel 1', deporte: 'Pádel', precio: 12000 },
+      { nombre: 'Cancha de Pádel 2', deporte: 'Pádel', precio: 12000 },
     ]
   },
   {
-    nombre: 'Club Elite Fitness',
+    nombre: 'Club Deportivo 3',
     email: 'Club3@gmail.com',
     deportes: ['Natación', 'Tenis', 'Fútbol 11'],
     canchas: [
-      { nombre: 'Piscina Olímpica', deporte: 'Natación', precio: 300 },
-      { nombre: 'Cancha de Tenis 1', deporte: 'Tenis', precio: 600 },
-      { nombre: 'Cancha de Tenis 2', deporte: 'Tenis', precio: 600 },
-      { nombre: 'Cancha de Fútbol 11', deporte: 'Fútbol 11', precio: 800 },
+      { nombre: 'Piscina Olímpica', deporte: 'Natación', precio: 5000 },
+      { nombre: 'Cancha de Tenis 1', deporte: 'Tenis', precio: 12000 },
+      { nombre: 'Cancha de Tenis 2', deporte: 'Tenis', precio: 12000 },
+      { nombre: 'Cancha de Fútbol 11', deporte: 'Fútbol 11', precio: 20000 },
     ]
   },
   {
-    nombre: 'Club Aventura y Deporte',
+    nombre: 'Club Deportivo 4',
     email: 'Club4@gmail.com',
     deportes: ['Golf', 'Pádel', 'Básquet'],
     canchas: [
-      { nombre: 'Campo de Golf 18 hoyos', deporte: 'Golf', precio: 1200 },
-      { nombre: 'Cancha de Pádel A', deporte: 'Pádel', precio: 550 },
-      { nombre: 'Cancha de Básquet', deporte: 'Básquet', precio: 400 },
+      { nombre: 'Campo de Golf 18 hoyos', deporte: 'Golf', precio: 12000 },
+      { nombre: 'Cancha de Pádel A', deporte: 'Pádel', precio: 12000 },
+      { nombre: 'Cancha de Básquet', deporte: 'Básquet', precio: 15000 },
     ]
   },
   {
-    nombre: 'Club Unión Deportiva',
+    nombre: 'Club Deportivo 5',
     email: 'Club5@gmail.com',
     deportes: ['Fútbol 5', 'Vóley', 'Natación'],
     canchas: [
-      { nombre: 'Cancha de Fútbol 5 Premium', deporte: 'Fútbol 5', precio: 600 },
-      { nombre: 'Cancha de Vóley de Arena', deporte: 'Vóley', precio: 500 },
-      { nombre: 'Cancha de Vóley Techada', deporte: 'Vóley', precio: 450 },
-      { nombre: 'Piscina Semi-Olímpica', deporte: 'Natación', precio: 350 },
+      { nombre: 'Cancha de Fútbol 5 Premium', deporte: 'Fútbol 5', precio: 20000 },
+      { nombre: 'Cancha de Vóley de Arena', deporte: 'Vóley', precio: 15000 },
+      { nombre: 'Cancha de Vóley Techada', deporte: 'Vóley', precio: 15000 },
+      { nombre: 'Piscina Semi-Olímpica', deporte: 'Natación', precio: 5000 },
     ]
   }
 ];
@@ -99,7 +99,7 @@ const deportesDisponibles = [
 async function seedDatabase() {
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USERNAME || 'root',
+    user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || 'password',
     database: process.env.DB_NAME || 'canchas_ya'
   });
