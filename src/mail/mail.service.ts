@@ -35,16 +35,19 @@ export class MailService {
 
       htmlContent = htmlContent.replace(
         '{{nombre}}',
-        data.nombre,
+        data.nombre
       );
       htmlContent = htmlContent.replace(
         '{{razonSocial}}',  
-        data.razonSocial,
+        data.razonSocial || ''
       );
-    
+      htmlContent = htmlContent.replace(
+        '{{email}}',
+        data.email
+      );
 
-
-      await this.mailerService.sendMail({
+       await this.mailerService.sendMail({
+         
         to: data.email,
         subject: data.subject,
         html: htmlContent,

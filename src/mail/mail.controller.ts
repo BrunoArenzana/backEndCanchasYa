@@ -10,10 +10,16 @@ export class MailController {
   @Post()
   async send(@Body() body: MailDto) {
     await this.mailService.sendContactMail(body);
-
-    return {
-      ok: true,
-      message: 'Mail enviado',
+    if (body) {
+      return {
+        ok: true,
+        message: 'Mail enviado',
+      };
+    }  else { 
+      return {
+        ok: false,
+        message: 'Mail no enviado',
+      };
+    }
     };
   }
-}

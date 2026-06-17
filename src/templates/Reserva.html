@@ -26,7 +26,7 @@ html: `
         color: #444;
         line-height: 1.6;
       ">
-        Hola <b>${data.nombre}</b>, tu reserva fue realizada correctamente en CanchasYa.
+        Hola <b>{{nombre}}</b>, tu reserva fue realizada correctamente en CanchasYa.
       </p>
 
       <div style="
@@ -37,19 +37,19 @@ html: `
       ">
 
         <p style="margin: 10px 0; font-size:16px;">
-          <b>📅 Fecha:</b> ${data.fecha}
+          <b>📅 Fecha:</b> {{Fecha}}
         </p>
 
         <p style="margin: 10px 0; font-size:16px;">
-          <b>⏰ Horario:</b> ${data.horario}
+          <b>⏰ Horario:</b> {{Horario}}
         </p>
 
         <p style="margin: 10px 0; font-size:16px;">
-          <b>🏟️ Cancha:</b> ${data.cancha}
+          <b>🏟️ Cancha:</b> {{Cancha}}
         </p>
 
         <p style="margin: 10px 0; font-size:16px;">
-          <b>📍 Complejo:</b> ${data.complejo}
+          <b>📍 club:</b> {{club}}
         </p>
 
       </div>
