@@ -92,6 +92,8 @@ export class ClubService {
       telefono: club.telefono_club,
       canchas: club.deportes_club,
       direccion: club.direccion_club,
+      ciudad: club.ciudad_club,
+      provincia: club.provincia_club,
       logo: club.logo_club,
       activo: club.estado === 'activo',
       detallesCanchas: club.canchas?.filter(cancha => cancha.activa === 1).map(cancha => ({
