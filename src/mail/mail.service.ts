@@ -22,9 +22,17 @@ export class MailService {
           break;
 
         case 'Reserva Exitosa':
-        case 'Reserva actualizada':
         case 'Reserva confirmada':
-          plantillaHtml = 'Reserva.html';
+        case 'Reserva actualizada':
+          plantillaHtml = 'ReservaConfirmada.html';
+          break;
+
+        case 'Reserva modificada':
+          plantillaHtml = 'ReservaModificada.html';
+          break;
+
+        case 'Reserva cancelada':
+          plantillaHtml = 'ReservaCancelada.html';
           break;
 
         default:
