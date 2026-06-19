@@ -1,7 +1,6 @@
-import { MailDto } from './dto/create-mail.dto';
 import { Body, Controller, Post } from '@nestjs/common';
+import { MailDto } from './dto/create-mail.dto';
 import { MailService } from './mail.service';
-
 
 @Controller('contact')
 export class MailController {
@@ -10,16 +9,10 @@ export class MailController {
   @Post()
   async send(@Body() body: MailDto) {
     await this.mailService.sendContactMail(body);
-    if (body) {
-      return {
-        ok: true,
-        message: 'Mail enviado',
-      };
-    }  else { 
-      return {
-        ok: false,
-        message: 'Mail no enviado',
-      };
-    }
+
+    return {
+      ok: true,
+      message: 'Mail enviado',
     };
   }
+}
