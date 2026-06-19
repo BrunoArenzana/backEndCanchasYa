@@ -52,11 +52,11 @@ export class MailService {
       htmlContent = htmlContent.replace(/\{\{message\}\}/g, data.message || '');
 
       await this.mailerService.sendMail({
-        to: data.email,
-        subject: data.subject,
-        html: htmlContent,
-      });
-
+  to: data.email,
+  from: '"CanchasYa!" <ycanchas@gmail.com>',
+  subject: data.subject,
+  html: htmlContent,
+});
       console.log(`Mail enviado exitosamente a ${data.email}`);
     } catch (error) {
       console.error('Error al enviar mail:', error);
