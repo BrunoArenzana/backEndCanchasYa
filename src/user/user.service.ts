@@ -256,6 +256,78 @@ export class UserService {
     }
   }
 
+
+  async findByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: { email_usuario: email },
+    });
+  }
+
+  async savePasswordResetCode(
+    email: string,
+    code: string,
+    expiresAt: Date,
+  ) {
+    await this.userRepository.update(
+      { email_usuario: email },
+      {
+        password_reset_code: code,
+        password_reset_expires: expiresAt,
+      },
+    );
+
+    return {
+      message: 'Código de recuperación generado correctamente',
+    };
+  }
+
+  async resetPasswordWithCode(
+    email: string,
+    code: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) {
+    if (!email || !code || !newPassword || !confirmPassword) {
+      throw new BadRequestException('Todos los campos son obligatorios.');
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestException('Las contraseñas no coinciden.');
+    }
+
+    if (newPassword.length < 6) {
+      throw new BadRequestException('La contraseña debe tener al menos 6 caracteres.');
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { email_usuario: email },
+    });
+
+    if (!user || !user.password_reset_code || !user.password_reset_expires) {
+      throw new BadRequestException('Código inválido o vencido.');
+    }
+
+    const ahora = new Date();
+
+    if (user.password_reset_code !== code) {
+      throw new BadRequestException('Código inválido o vencido.');
+    }
+
+    if (user.password_reset_expires < ahora) {
+      throw new BadRequestException('Código inválido o vencido.');
+    }
+
+    user.password_usuario = newPassword;
+    user.password_reset_code = null;
+    user.password_reset_expires = null;
+
+    await this.userRepository.save(user);
+
+    return {
+      message: 'Contraseña actualizada correctamente.',
+    };
+  }
+
   async login(email: string, password: string) {
     const user = await this.userRepository.findOne({
       where: { email_usuario: email },

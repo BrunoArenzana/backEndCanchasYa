@@ -39,6 +39,9 @@ export class MailService {
       case 'Reserva cancelada':
         return 'ReservaCancelada.html';
 
+      case 'Código de recuperación - CanchasYa!':
+        return 'RecuperarPassword.html';
+
       default:
         throw new Error(`Subject no válido: ${subject}`);
     }
@@ -94,6 +97,17 @@ export class MailService {
     return false;
   }
 
+  private cargarPlantilla(nombrePlantilla: string): string {
+    const filePath = path.join(
+      process.cwd(),
+      'src',
+      'templates',
+      nombrePlantilla,
+    );
+
+    return fs.readFileSync(filePath, 'utf8');
+  }
+
   async sendContactMail(data: MailDto) {
     try {
       const subjectNormalizado = this.normalizarSubject(data.subject);
@@ -114,14 +128,7 @@ export class MailService {
         return;
       }
 
-      const filePath = path.join(
-        process.cwd(),
-        'src',
-        'templates',
-        plantillaHtml,
-      );
-
-      let htmlContent = fs.readFileSync(filePath, 'utf8');
+      let htmlContent = this.cargarPlantilla(plantillaHtml);
 
       const emojiDeporte = this.obtenerEmojiDeporte(data.cancha);
 
@@ -151,6 +158,40 @@ export class MailService {
       console.log(`Mail enviado exitosamente a ${data.email}: ${subjectNormalizado}`);
     } catch (error) {
       console.error('Error al enviar mail:', error);
+      throw error;
+    }
+  }
+
+  async sendPasswordRecoveryCode(data: {
+    email: string;
+    nombre: string;
+    codigo: string;
+    minutos?: number;
+  }) {
+    try {
+      const subject = 'Código de recuperación - CanchasYa!';
+      const plantillaHtml = this.obtenerPlantilla(subject);
+
+      let htmlContent = this.cargarPlantilla(plantillaHtml);
+
+      htmlContent = htmlContent.replace(/\{\{nombre\}\}/g, data.nombre || '');
+      htmlContent = htmlContent.replace(/\{\{email\}\}/g, data.email || '');
+      htmlContent = htmlContent.replace(/\{\{codigo\}\}/g, data.codigo || '');
+      htmlContent = htmlContent.replace(
+        /\{\{minutos\}\}/g,
+        String(data.minutos || 10),
+      );
+
+      await this.mailerService.sendMail({
+        to: data.email,
+        from: '"CanchasYa!" <ycanchas@gmail.com>',
+        subject,
+        html: htmlContent,
+      });
+
+      console.log(`Código de recuperación enviado a ${data.email}`);
+    } catch (error) {
+      console.error('Error al enviar código de recuperación:', error);
       throw error;
     }
   }

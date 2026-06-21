@@ -21,4 +21,19 @@ export class AuthController {
   registerDueno(@Body() body: any, @UploadedFile() file: any) {
     return this.authService.registerDueno(body, file);
   }
+
+  @Post('forgot-password/send-code')
+  sendPasswordResetCode(@Body() body: any) {
+    return this.authService.sendPasswordResetCode(body.email);
+  }
+
+  @Post('forgot-password/reset')
+  resetPassword(@Body() body: any) {
+    return this.authService.resetPassword(
+      body.email,
+      body.code,
+      body.newPassword,
+      body.confirmPassword,
+    );
+  }
 }
