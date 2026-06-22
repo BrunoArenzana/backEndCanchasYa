@@ -51,7 +51,7 @@ export class Club {
   @JoinColumn({ name: 'id_admin_aprobado' })
   admin_aprobado!: User;
 
-  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
+  @CreateDateColumn({ name: 'created_at' })
   created_at!: Date;
 
 

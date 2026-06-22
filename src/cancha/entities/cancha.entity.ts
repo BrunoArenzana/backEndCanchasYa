@@ -20,7 +20,7 @@ export class Cancha {
   @Column({ name: 'precio_por_hora', type: 'decimal', precision: 10, scale: 2, default: 0 })
   precio_por_hora?: number;
 
-  @Column({ name: 'activa', type: 'tinyint', default: 1 })
+  @Column({ name: 'activa', type: 'smallint', default: 1 })
   activa?: number;
 
   @Column({ name: 'direccion_cancha', type: 'varchar', length: 255, nullable: true })

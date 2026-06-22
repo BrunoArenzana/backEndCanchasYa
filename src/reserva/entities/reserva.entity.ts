@@ -36,7 +36,7 @@ export class Reserva {
   @JoinColumn({ name: 'id_cancha' })
   cancha!: Cancha;
 
-  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
+  @CreateDateColumn({ name: 'created_at' })
   created_at!: Date;
 
   @OneToMany(() => Pago, (pago) => pago.reserva)

@@ -14,21 +14,28 @@ import { GeorefModule } from './georef/georef.module';
 import { AuthModule } from './auth/auth.module'
 import { RolesGuard } from './auth/guard/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
-    
+
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
         }),
         TypeOrmModule.forRoot({
-            type: 'mysql',
-            host: process.env.DB_HOST,
-            port: Number(process.env.DB_PORT),
-            username: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
+            type: 'postgres',
+            ...(process.env.DATABASE_URL
+                ? { url: process.env.DATABASE_URL }
+                : {
+                    host: process.env.DB_HOST,
+                    port: Number(process.env.DB_PORT),
+                    username: process.env.DB_USER,
+                    password: process.env.DB_PASSWORD,
+                    database: process.env.DB_NAME,
+                }),
+            ssl: process.env.DATABASE_URL || process.env.DB_SSL === 'true'
+                ? { rejectUnauthorized: false }
+                : false,
             autoLoadEntities: true,
-            synchronize: true,
+            synchronize: process.env.DB_SYNC === 'false',
         }),
         MailerModule.forRootAsync({
             inject: [ConfigService],
@@ -60,6 +67,6 @@ import { APP_GUARD } from '@nestjs/core';
     ],
     controllers: [],
     providers: [/*{ provide: APP_GUARD , useClass: RolesGuard }*/],
-    
+
 })
 export class AppModule { }

@@ -27,7 +27,7 @@ export class Pago {
   @Column({ name: 'referencia_externa', type: 'varchar', length: 100, nullable: true })
   referencia_externa!: string;
 
-  @Column({ name: 'fecha_pago', type: 'datetime', nullable: true })
+  @Column({ name: 'fecha_pago', type: 'timestamp', nullable: true })
   fecha_pago!: Date;
 
   @ManyToOne(() => Reserva, { onDelete: 'CASCADE' })
