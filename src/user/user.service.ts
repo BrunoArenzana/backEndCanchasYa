@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +15,8 @@ import { Repository, DataSource } from 'typeorm';
 
 @Injectable()
 export class UserService {
+  private readonly SALT_ROUNDS = 10;
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -23,6 +26,54 @@ export class UserService {
 
     private dataSource: DataSource,
   ) {}
+
+  private esPasswordHasheada(password: string): boolean {
+    return (
+      password.startsWith('$2a$') ||
+      password.startsWith('$2b$') ||
+      password.startsWith('$2y$')
+    );
+  }
+
+  private async hashearPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, this.SALT_ROUNDS);
+  }
+
+  private validarPoliticaPassword(password: string) {
+    if (!password) {
+      throw new BadRequestException('La contraseña es obligatoria.');
+    }
+
+    const tieneMinimoCaracteres = password.length >= 8;
+    const tieneLetra = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(password);
+    const tieneNumero = /\d/.test(password);
+
+    if (!tieneMinimoCaracteres || !tieneLetra || !tieneNumero) {
+      throw new BadRequestException(
+        'La contraseña debe tener al menos 8 caracteres, incluir una letra y un número.',
+      );
+    }
+  }
+
+  private async validarPasswordYMigrarSiHaceFalta(
+    user: User,
+    passwordIngresada: string,
+  ): Promise<boolean> {
+    const passwordGuardada = user.password_usuario || '';
+
+    if (this.esPasswordHasheada(passwordGuardada)) {
+      return bcrypt.compare(passwordIngresada, passwordGuardada);
+    }
+
+    const passwordValida = passwordGuardada === passwordIngresada;
+
+    if (passwordValida) {
+      user.password_usuario = await this.hashearPassword(passwordIngresada);
+      await this.userRepository.save(user);
+    }
+
+    return passwordValida;
+  }
 
   async create(createUserDto: CreateUserDto) {
     try {
@@ -56,6 +107,8 @@ export class UserService {
         }
       }
 
+      this.validarPoliticaPassword(createUserDto.password_usuario);
+
       const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
 
       const estado =
@@ -65,8 +118,13 @@ export class UserService {
           ? 'pendiente_aprobacion'
           : 'activo';
 
+      const passwordHasheada = await this.hashearPassword(
+        createUserDto.password_usuario,
+      );
+
       const user = this.userRepository.create({
         ...createUserDto,
+        password_usuario: passwordHasheada,
         tipo_usuario: tipo,
         estado_usuario: estado,
       });
@@ -160,6 +218,8 @@ export class UserService {
       }
     }
 
+    this.validarPoliticaPassword(data.password);
+
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -174,11 +234,13 @@ export class UserService {
         ? JSON.parse(canchasRaw)
         : [];
 
+      const passwordHasheada = await this.hashearPassword(data.password);
+
       const user = queryRunner.manager.create(User, {
         nombre_usuario: data.nombre,
         apellido_usuario: data.apellido,
         email_usuario: data.email,
-        password_usuario: data.password,
+        password_usuario: passwordHasheada,
         telefono_usuario: data.telefono,
         dni_usuario: data.DNI || data.dni || null,
         CUIT_usuario: normalize(data.CUIT) || normalize(data.cuit) || null,
@@ -193,7 +255,9 @@ export class UserService {
 
       const club = queryRunner.manager.create(Club, {
         nombre_club:
-          normalize(data.razonSocial) || normalize(data.nombreClub) || 'Sin nombre',
+          normalize(data.razonSocial) ||
+          normalize(data.nombreClub) ||
+          'Sin nombre',
         direccion_club: normalize(data.direccion) || 'sin direccion',
         ciudad_club: normalize(data.ciudad),
         provincia_club: normalize(data.provincia),
@@ -256,18 +320,13 @@ export class UserService {
     }
   }
 
-
   async findByEmail(email: string) {
     return this.userRepository.findOne({
       where: { email_usuario: email },
     });
   }
 
-  async savePasswordResetCode(
-    email: string,
-    code: string,
-    expiresAt: Date,
-  ) {
+  async savePasswordResetCode(email: string, code: string, expiresAt: Date) {
     await this.userRepository.update(
       { email_usuario: email },
       {
@@ -295,9 +354,7 @@ export class UserService {
       throw new BadRequestException('Las contraseñas no coinciden.');
     }
 
-    if (newPassword.length < 6) {
-      throw new BadRequestException('La contraseña debe tener al menos 6 caracteres.');
-    }
+    this.validarPoliticaPassword(newPassword);
 
     const user = await this.userRepository.findOne({
       where: { email_usuario: email },
@@ -317,7 +374,7 @@ export class UserService {
       throw new BadRequestException('Código inválido o vencido.');
     }
 
-    user.password_usuario = newPassword;
+    user.password_usuario = await this.hashearPassword(newPassword);
     user.password_reset_code = null;
     user.password_reset_expires = null;
 
@@ -334,7 +391,16 @@ export class UserService {
       relations: ['clubs'],
     });
 
-    if (!user || user.password_usuario !== password) {
+    if (!user) {
+      throw new UnauthorizedException('Usuario o contraseña incorrectos');
+    }
+
+    const passwordValida = await this.validarPasswordYMigrarSiHaceFalta(
+      user,
+      password,
+    );
+
+    if (!passwordValida) {
       throw new UnauthorizedException('Usuario o contraseña incorrectos');
     }
 
