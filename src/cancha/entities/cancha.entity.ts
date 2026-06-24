@@ -3,7 +3,7 @@ import { Club } from '../../club/entities/club.entity';
 import { Deporte } from '../../deporte/entities/deporte.entity';
 import { Reserva } from '../../reserva/entities/reserva.entity';
 import { Disponibilidad } from '../../disponibilidad/entities/disponibilidad.entity';
-import { User } from 'src/user/entities/user.entity';
+
 
 
 @Entity('cancha')
