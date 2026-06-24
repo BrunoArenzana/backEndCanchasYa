@@ -1,11 +1,12 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class MailDto {
   @IsString()
   nombre!: string;
 
+  @IsOptional()
   @IsString()
-  razonSocial!: string;
+  razonSocial?: string;
 
   @IsEmail()
   email!: string;
@@ -13,6 +14,23 @@ export class MailDto {
   @IsString()
   subject!: string;
 
+  @IsOptional()
   @IsString()
-  message!: string;
+  message?: string;
+
+  @IsOptional()
+  @IsString()
+  fecha?: string;
+
+  @IsOptional()
+  @IsString()
+  cancha?: string;
+
+  @IsOptional()
+  @IsString()
+  hora?: string;
+
+  @IsOptional()
+  @IsString()
+  club?: string;
 }

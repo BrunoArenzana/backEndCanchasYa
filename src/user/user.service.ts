@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,12 +12,11 @@ import { Club } from '../club/entities/club.entity';
 import { Cancha } from '../cancha/entities/cancha.entity';
 import { Deporte } from '../deporte/entities/deporte.entity';
 import { Repository, DataSource } from 'typeorm';
-import { QueryFailedError } from 'typeorm';
-
-
 
 @Injectable()
 export class UserService {
+  private readonly SALT_ROUNDS = 10;
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -23,71 +27,140 @@ export class UserService {
     private dataSource: DataSource,
   ) {}
 
-async create(createUserDto: CreateUserDto) {
-  try {
-    // 👇 VALIDACIÓN PREVIA DE DUPLICADOS
-    if (createUserDto.email_usuario) {
-      const existingEmail = await this.userRepository.findOne({
-        where: { email_usuario: createUserDto.email_usuario }
-      });
-      if (existingEmail) {
-        throw new BadRequestException('El email ya está registrado');
-      }
+  private esPasswordHasheada(password: string): boolean {
+    return (
+      password.startsWith('$2a$') ||
+      password.startsWith('$2b$') ||
+      password.startsWith('$2y$')
+    );
+  }
+
+  private async hashearPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, this.SALT_ROUNDS);
+  }
+
+  private validarPoliticaPassword(password: string) {
+    if (!password) {
+      throw new BadRequestException('La contraseña es obligatoria.');
     }
 
-    if (createUserDto.dni_usuario) {
-      const existingDni = await this.userRepository.findOne({
-        where: { dni_usuario: createUserDto.dni_usuario }
-      });
-      if (existingDni) {
-        throw new BadRequestException('El DNI ya está registrado');
-      }
+    const tieneMinimoCaracteres = password.length >= 8;
+    const tieneLetra = /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/.test(password);
+    const tieneNumero = /\d/.test(password);
+
+    if (!tieneMinimoCaracteres || !tieneLetra || !tieneNumero) {
+      throw new BadRequestException(
+        'La contraseña debe tener al menos 8 caracteres, incluir una letra y un número.',
+      );
+    }
+  }
+
+  private async validarPasswordYMigrarSiHaceFalta(
+    user: User,
+    passwordIngresada: string,
+  ): Promise<boolean> {
+    const passwordGuardada = user.password_usuario || '';
+
+    if (this.esPasswordHasheada(passwordGuardada)) {
+      return bcrypt.compare(passwordIngresada, passwordGuardada);
     }
 
-    if (createUserDto.CUIT_usuario) {
-      const existingCuit = await this.userRepository.findOne({
-        where: { CUIT_usuario: createUserDto.CUIT_usuario }
-      });
-      if (existingCuit) {
-        throw new BadRequestException('El CUIT ya está registrado');
-      }
+    const passwordValida = passwordGuardada === passwordIngresada;
+
+    if (passwordValida) {
+      user.password_usuario = await this.hashearPassword(passwordIngresada);
+      await this.userRepository.save(user);
     }
 
-    const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
-    const estado =
-      tipo === 'usuario'
-        ? 'activo'
-        : tipo === 'dueno'
-        ? 'pendiente_aprobacion'
-        : 'activo';
+    return passwordValida;
+  }
 
-    const user = this.userRepository.create({
-      ...createUserDto,
-      tipo_usuario: tipo,
-      estado_usuario: estado,
+  async create(createUserDto: CreateUserDto) {
+    try {
+      if (createUserDto.email_usuario) {
+        const existingEmail = await this.userRepository.findOne({
+          where: { email_usuario: createUserDto.email_usuario },
+        });
+
+        if (existingEmail) {
+          throw new BadRequestException('El email ya está registrado');
+        }
+      }
+
+      if (createUserDto.dni_usuario) {
+        const existingDni = await this.userRepository.findOne({
+          where: { dni_usuario: createUserDto.dni_usuario },
+        });
+
+        if (existingDni) {
+          throw new BadRequestException('El DNI ya está registrado');
+        }
+      }
+
+      if (createUserDto.CUIT_usuario) {
+        const existingCuit = await this.userRepository.findOne({
+          where: { CUIT_usuario: createUserDto.CUIT_usuario },
+        });
+
+        if (existingCuit) {
+          throw new BadRequestException('El CUIT ya está registrado');
+        }
+      }
+
+      this.validarPoliticaPassword(createUserDto.password_usuario);
+
+      const tipo = (createUserDto.tipo_usuario || 'usuario').toString();
+
+      const estado =
+        tipo === 'usuario'
+          ? 'activo'
+          : tipo === 'dueno'
+          ? 'pendiente_aprobacion'
+          : 'activo';
+
+      const passwordHasheada = await this.hashearPassword(
+        createUserDto.password_usuario,
+      );
+
+      const user = this.userRepository.create({
+        ...createUserDto,
+        password_usuario: passwordHasheada,
+        tipo_usuario: tipo,
+        estado_usuario: estado,
+      });
+
+      const saved = await this.userRepository.save(user);
+
+      return {
+        id_usuario: saved.id_usuario,
+        nombre_usuario: saved.nombre_usuario,
+        apellido_usuario: saved.apellido_usuario,
+        email_usuario: saved.email_usuario,
+        tipo_usuario: saved.tipo_usuario,
+        estado_usuario: saved.estado_usuario,
+        created_at: saved.created_at,
+      };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new BadRequestException('Error al crear usuario');
+    }
+  }
+
+  async countRegisteredUsers() {
+    const total = await this.userRepository.count({
+      where: {
+        tipo_usuario: 'usuario',
+        estado_usuario: 'activo',
+      },
     });
 
-    const saved = await this.userRepository.save(user);
-
     return {
-      id_usuario: saved.id_usuario,
-      nombre_usuario: saved.nombre_usuario,
-      apellido_usuario: saved.apellido_usuario,
-      email_usuario: saved.email_usuario,
-      tipo_usuario: saved.tipo_usuario,
-      estado_usuario: saved.estado_usuario,
-      created_at: saved.created_at,
+      total,
     };
-  } catch (error) {
-    // Si ya es una BadRequestException, la relanzamos
-    if (error instanceof BadRequestException) {
-      throw error;
-    }
-
-    // Para cualquier otro error
-    throw new BadRequestException('Error al crear usuario');
   }
-}
 
   findAll() {
     return this.userRepository.find({
@@ -103,10 +176,7 @@ async create(createUserDto: CreateUserDto) {
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
-    return this.userRepository.update(
-      { id_usuario: id },
-      updateUserDto,
-    );
+    return this.userRepository.update({ id_usuario: id }, updateUserDto);
   }
 
   remove(id: number) {
@@ -114,35 +184,41 @@ async create(createUserDto: CreateUserDto) {
   }
 
   async createWithClub(data: any, file?: any) {
-    // 👇 VALIDACIÓN PREVIA DE DUPLICADOS
     if (data.email) {
       const existingEmail = await this.userRepository.findOne({
-        where: { email_usuario: data.email }
+        where: { email_usuario: data.email },
       });
+
       if (existingEmail) {
         throw new BadRequestException('El email ya está registrado');
       }
     }
 
     const normalizedCuit = (data.CUIT || data.cuit || '').toString().trim();
+
     if (normalizedCuit) {
       const existingCuit = await this.userRepository.findOne({
-        where: { CUIT_usuario: normalizedCuit }
+        where: { CUIT_usuario: normalizedCuit },
       });
+
       if (existingCuit) {
         throw new BadRequestException('El CUIT ya está registrado');
       }
     }
 
-    const normalizedDni = ((data.DNI || data.dni) || '').toString().trim();
+    const normalizedDni = (data.DNI || data.dni || '').toString().trim();
+
     if (normalizedDni) {
       const existingDni = await this.userRepository.findOne({
-        where: { dni_usuario: normalizedDni }
+        where: { dni_usuario: normalizedDni },
       });
+
       if (existingDni) {
         throw new BadRequestException('El DNI ya está registrado');
       }
     }
+
+    this.validarPoliticaPassword(data.password);
 
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -150,39 +226,38 @@ async create(createUserDto: CreateUserDto) {
     await queryRunner.startTransaction();
 
     try {
-
-      //EVITA EL ARRAY DE CUIT EN EL FORMULARIO, QUE VIENE COMO UN ARRAY
       const normalize = (v: any) => (Array.isArray(v) ? v[0] : v);
 
       const canchasRaw = normalize(data.canchas);
 
-      /*// Reject array values for scalar fields that must be single-valued in the form.
-      if (Array.isArray(data.CUIT) || Array.isArray(data.cuit)) {
-        throw new BadRequestException('El campo CUIT debe enviarse como un único valor, no como un arreglo. Revisa el formulario.');
-      }*/
       const deportesSeleccionados: string[] = canchasRaw
         ? JSON.parse(canchasRaw)
         : [];
 
+      const passwordHasheada = await this.hashearPassword(data.password);
+
       const user = queryRunner.manager.create(User, {
-        nombre_usuario: (data.nombre),
-        apellido_usuario: (data.apellido),
-        email_usuario: (data.email),
-        password_usuario: (data.password),
-        telefono_usuario: (data.telefono),
-        dni_usuario: (data.DNI) || (data.dni) || null,
+        nombre_usuario: data.nombre,
+        apellido_usuario: data.apellido,
+        email_usuario: data.email,
+        password_usuario: passwordHasheada,
+        telefono_usuario: data.telefono,
+        dni_usuario: data.DNI || data.dni || null,
         CUIT_usuario: normalize(data.CUIT) || normalize(data.cuit) || null,
-        direccion_usuario:(data.direccion) || 'sin direccion',
-        ciudad_usuario: (data.ciudad),
-        provincia_usuario: (data.provincia),
-        cp_usuario: (data.cp),
-        tipo_usuario: (data.tipo) || 'dueno',
+        direccion_usuario: data.direccion || 'sin direccion',
+        ciudad_usuario: data.ciudad,
+        provincia_usuario: data.provincia,
+        cp_usuario: data.cp,
+        tipo_usuario: data.tipo || 'dueno',
       });
 
       const savedUser = await queryRunner.manager.save(user);
 
       const club = queryRunner.manager.create(Club, {
-        nombre_club: normalize(data.razonSocial) || normalize(data.nombreClub) || 'Sin nombre',
+        nombre_club:
+          normalize(data.razonSocial) ||
+          normalize(data.nombreClub) ||
+          'Sin nombre',
         direccion_club: normalize(data.direccion) || 'sin direccion',
         ciudad_club: normalize(data.ciudad),
         provincia_club: normalize(data.provincia),
@@ -201,7 +276,6 @@ async create(createUserDto: CreateUserDto) {
         });
 
         if (!deporte) {
-          // Si el deporte no existe, lo creamos automáticamente para facilitar el registro.
           const nuevoDeporte = queryRunner.manager.create(Deporte, {
             nombre_deporte: nombreDeporte,
           });
@@ -235,16 +309,80 @@ async create(createUserDto: CreateUserDto) {
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      
-      // Si ya es una BadRequestException de validación previa, la relanzamos
+
       if (error instanceof BadRequestException) {
         throw error;
       }
-      
+
       throw error;
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async findByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: { email_usuario: email },
+    });
+  }
+
+  async savePasswordResetCode(email: string, code: string, expiresAt: Date) {
+    await this.userRepository.update(
+      { email_usuario: email },
+      {
+        password_reset_code: code,
+        password_reset_expires: expiresAt,
+      },
+    );
+
+    return {
+      message: 'Código de recuperación generado correctamente',
+    };
+  }
+
+  async resetPasswordWithCode(
+    email: string,
+    code: string,
+    newPassword: string,
+    confirmPassword: string,
+  ) {
+    if (!email || !code || !newPassword || !confirmPassword) {
+      throw new BadRequestException('Todos los campos son obligatorios.');
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestException('Las contraseñas no coinciden.');
+    }
+
+    this.validarPoliticaPassword(newPassword);
+
+    const user = await this.userRepository.findOne({
+      where: { email_usuario: email },
+    });
+
+    if (!user || !user.password_reset_code || !user.password_reset_expires) {
+      throw new BadRequestException('Código inválido o vencido.');
+    }
+
+    const ahora = new Date();
+
+    if (user.password_reset_code !== code) {
+      throw new BadRequestException('Código inválido o vencido.');
+    }
+
+    if (user.password_reset_expires < ahora) {
+      throw new BadRequestException('Código inválido o vencido.');
+    }
+
+    user.password_usuario = await this.hashearPassword(newPassword);
+    user.password_reset_code = null;
+    user.password_reset_expires = null;
+
+    await this.userRepository.save(user);
+
+    return {
+      message: 'Contraseña actualizada correctamente.',
+    };
   }
 
   async login(email: string, password: string) {
@@ -253,7 +391,16 @@ async create(createUserDto: CreateUserDto) {
       relations: ['clubs'],
     });
 
-    if (!user || user.password_usuario !== password) {
+    if (!user) {
+      throw new UnauthorizedException('Usuario o contraseña incorrectos');
+    }
+
+    const passwordValida = await this.validarPasswordYMigrarSiHaceFalta(
+      user,
+      password,
+    );
+
+    if (!passwordValida) {
       throw new UnauthorizedException('Usuario o contraseña incorrectos');
     }
 

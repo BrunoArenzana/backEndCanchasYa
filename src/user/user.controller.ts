@@ -20,10 +20,9 @@ import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 
-
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -40,23 +39,26 @@ export class UserController {
 
   @Post('create-admin')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin') // Asegura que solo usuarios autenticados puedan crear admins@
+  @Roles('admin')
   async createAdmin(@Body() createUserDto: CreateUserDto) {
-    // Forzar el tipo a admin para asegurar que se cree como administrador
     createUserDto.tipo_usuario = 'admin';
     return this.create(createUserDto);
   }
+
   @Post('login')
   login(@Body() body: { email: string; password: string }) {
     return this.userService.login(body.email, body.password);
   }
+
   @Post('register')
   @UseInterceptors(
     FileInterceptor('logo', {
       storage: diskStorage({
         destination: './uploads',
         filename: (req, file, callback) => {
-          const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+          const uniqueName = `${Date.now()}-${Math.round(
+            Math.random() * 1e9,
+          )}${extname(file.originalname)}`;
           callback(null, uniqueName);
         },
       }),
@@ -71,10 +73,14 @@ export class UserController {
     }
   }
 
+  @Get('count')
+  countRegisteredUsers() {
+    return this.userService.countRegisteredUsers();
+  }
 
   @Get()
-@UseGuards(AuthGuard, RolesGuard)
-@Roles('admin')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('admin')
   findAll() {
     return this.userService.findAll();
   }
@@ -88,14 +94,14 @@ export class UserController {
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin', 'dueno', 'usuario', 'club') // Permitir que admins, dueños y usuarios puedan actualizar su propia información
+  @Roles('admin', 'dueno', 'usuario', 'club')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin') // Solo los admins pueden eliminar usuarios
+  @Roles('admin')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
