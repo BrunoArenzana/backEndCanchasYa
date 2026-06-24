@@ -16,9 +16,9 @@ import { extname } from 'path';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { RolesGuard } from 'src/auth/guard/roles.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { RolesGuard } from '../auth/guard/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('user')
 export class UserController {

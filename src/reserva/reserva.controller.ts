@@ -3,9 +3,9 @@ import { ReservaService } from './reserva.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guard/roles.guard';
 
 @Controller('reserva')
 // @UseGuards(RolesGuard)

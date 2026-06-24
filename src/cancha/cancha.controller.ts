@@ -3,9 +3,9 @@ import { CanchaService } from './cancha.service';
 import { CreateCanchaDto } from './dto/create-cancha.dto';
 import { UpdateCanchaDto } from './dto/update-cancha.dto';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/guard/auth.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guard/roles.guard';
 
 @Controller('cancha')
 export class CanchaController {
