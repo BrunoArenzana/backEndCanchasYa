@@ -6,7 +6,7 @@ export class Disponibilidad {
   @PrimaryGeneratedColumn({ name: 'id_disponibilidad' })
   id_disponibilidad!: number;
 
-  @Column({ name: 'dia_semana', type: 'tinyint' })
+  @Column({ name: 'dia_semana', type: 'int' })
   dia_semana!: number;
 
   @Column({ name: 'hora_inicio', type: 'time' })

@@ -29,7 +29,7 @@ export class User {
     @Column({ name: 'password_reset_code', type: 'varchar', length: 10, nullable: true })
     password_reset_code!: string | null;
 
-    @Column({ name: 'password_reset_expires', type: 'datetime', nullable: true })
+    @Column({ name: 'password_reset_expires', type: 'timestamptz', nullable: true })
     password_reset_expires!: Date | null;
 
     @Column({ name: 'telefono_usuario', type: 'varchar', length: 20, nullable: true })
@@ -67,7 +67,7 @@ export class User {
     @JoinColumn({ name: 'id_admin_aprobado' })
     admin_aprobado!: User | null;
 
-    @CreateDateColumn({ name: 'created_at', type: 'datetime' })
+    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     created_at!: Date;
 
     canchas!: Cancha[];
