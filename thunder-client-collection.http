@@ -1,8 +1,8 @@
 # Colección de Requests para Thunder Client - CanchasYa API
-# Base URL: http://localhost:3000
+# Base URL: ${API_URL}
 
 ## 1. Crear Deporte (Fútbol)
-POST http://localhost:3000/deporte
+POST ${API_URL}/deporte
 Content-Type: application/json
 
 {
@@ -13,7 +13,7 @@ Content-Type: application/json
 ---
 
 ## 2. Crear Deporte (Básquet)
-POST http://localhost:3000/deporte
+POST ${API_URL}/deporte
 Content-Type: application/json
 
 {
@@ -24,7 +24,7 @@ Content-Type: application/json
 ---
 
 ## 3. Crear Deporte (Tenis)
-POST http://localhost:3000/deporte
+POST ${API_URL}/deporte
 Content-Type: application/json
 
 {
@@ -35,12 +35,12 @@ Content-Type: application/json
 ---
 
 ## 4. Listar todos los Deportes
-GET http://localhost:3000/deporte
+GET ${API_URL}/deporte
 
 ---
 
 ## 5. Crear Dueño de Cancha
-POST http://localhost:3000/dueno_cancha
+POST ${API_URL}/dueno_cancha
 Content-Type: application/json
 
 {
@@ -55,12 +55,12 @@ Content-Type: application/json
 ---
 
 ## 6. Listar todos los Dueños
-GET http://localhost:3000/dueno_cancha
+GET ${API_URL}/dueno_cancha
 
 ---
 
 ## 7. Crear Club (Necesitas el id_dueno del paso anterior)
-POST http://localhost:3000/club
+POST ${API_URL}/club
 Content-Type: application/json
 
 {
@@ -76,7 +76,7 @@ Content-Type: application/json
 ---
 
 ## 8. Crear otro Club
-POST http://localhost:3000/club
+POST ${API_URL}/club
 Content-Type: application/json
 
 {
@@ -92,12 +92,12 @@ Content-Type: application/json
 ---
 
 ## 9. Listar todos los Clubs
-GET http://localhost:3000/club
+GET ${API_URL}/club
 
 ---
 
 ## 10. Crear Cancha (Necesitas id_club e id_deporte de pasos anteriores)
-POST http://localhost:3000/cancha
+POST ${API_URL}/cancha
 Content-Type: application/json
 
 {
@@ -112,7 +112,7 @@ Content-Type: application/json
 ---
 
 ## 11. Crear otra Cancha
-POST http://localhost:3000/cancha
+POST ${API_URL}/cancha
 Content-Type: application/json
 
 {
@@ -127,7 +127,7 @@ Content-Type: application/json
 ---
 
 ## 12. Crear Cancha de Básquet
-POST http://localhost:3000/cancha
+POST ${API_URL}/cancha
 Content-Type: application/json
 
 {
@@ -142,12 +142,12 @@ Content-Type: application/json
 ---
 
 ## 13. Listar todas las Canchas
-GET http://localhost:3000/cancha
+GET ${API_URL}/cancha
 
 ---
 
 ## 14. Crear Usuario (Cliente que hace reservas)
-POST http://localhost:3000/usuario
+POST ${API_URL}/usuario
 Content-Type: application/json
 
 {
@@ -161,7 +161,7 @@ Content-Type: application/json
 ---
 
 ## 15. Crear otro Usuario
-POST http://localhost:3000/usuario
+POST ${API_URL}/usuario
 Content-Type: application/json
 
 {
@@ -175,12 +175,12 @@ Content-Type: application/json
 ---
 
 ## 16. Listar todos los Usuarios
-GET http://localhost:3000/usuario
+GET ${API_URL}/usuario
 
 ---
 
 ## 17. Crear Disponibilidad (Necesitas id_cancha)
-POST http://localhost:3000/disponibilidad
+POST ${API_URL}/disponibilidad
 Content-Type: application/json
 
 {
@@ -193,7 +193,7 @@ Content-Type: application/json
 ---
 
 ## 18. Crear más Disponibilidades para la misma cancha
-POST http://localhost:3000/disponibilidad
+POST ${API_URL}/disponibilidad
 Content-Type: application/json
 
 {
@@ -205,7 +205,7 @@ Content-Type: application/json
 
 ---
 
-POST http://localhost:3000/disponibilidad
+POST ${API_URL}/disponibilidad
 Content-Type: application/json
 
 {
@@ -218,12 +218,12 @@ Content-Type: application/json
 ---
 
 ## 19. Listar disponibilidades
-GET http://localhost:3000/disponibilidad
+GET ${API_URL}/disponibilidad
 
 ---
 
 ## 20. Crear Reserva (Necesitas id_usuario e id_cancha)
-POST http://localhost:3000/reserva
+POST ${API_URL}/reserva
 Content-Type: application/json
 
 {
@@ -239,7 +239,7 @@ Content-Type: application/json
 ---
 
 ## 21. Crear otra Reserva
-POST http://localhost:3000/reserva
+POST ${API_URL}/reserva
 Content-Type: application/json
 
 {
@@ -255,22 +255,22 @@ Content-Type: application/json
 ---
 
 ## 22. Listar todas las Reservas
-GET http://localhost:3000/reserva
+GET ${API_URL}/reserva
 
 ---
 
 ## 23. Obtener una Cancha específica
-GET http://localhost:3000/cancha/1
+GET ${API_URL}/cancha/1
 
 ---
 
 ## 24. Obtener un Club específico
-GET http://localhost:3000/club/1
+GET ${API_URL}/club/1
 
 ---
 
 ## 25. Actualizar una Cancha (ejemplo: cambiar precio)
-PATCH http://localhost:3000/cancha/1
+PATCH ${API_URL}/cancha/1
 Content-Type: application/json
 
 {
@@ -280,7 +280,7 @@ Content-Type: application/json
 ---
 
 ## 26. Actualizar un Usuario
-PATCH http://localhost:3000/usuario/1
+PATCH ${API_URL}/usuario/1
 Content-Type: application/json
 
 {
@@ -290,12 +290,12 @@ Content-Type: application/json
 ---
 
 ## 27. Obtener todos los datos (resumen)
-GET http://localhost:3000/deporte
-GET http://localhost:3000/dueno_cancha
-GET http://localhost:3000/club
-GET http://localhost:3000/cancha
-GET http://localhost:3000/usuario
-GET http://localhost:3000/reserva
+GET ${API_URL}/deporte
+GET ${API_URL}/dueno_cancha
+GET ${API_URL}/club
+GET ${API_URL}/cancha
+GET ${API_URL}/usuario
+GET ${API_URL}/reserva
 
 ---
 
