@@ -56,13 +56,7 @@ export class ReservaService {
   }
 
   async findByClub(idClub: number) {
-    const reservas = await this.reservaRepository.find({
-      where: { cancha: { id_club: { id_club: idClub } } },
-      relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
-    });
-
-    if (reservas.length === 0) {
-      // Fallback query with QueryBuilder if the nested where clause failed
+    try {
       const queryReservas = await this.reservaRepository.createQueryBuilder('reserva')
         .leftJoinAndSelect('reserva.usuario', 'usuario')
         .leftJoinAndSelect('reserva.cancha', 'cancha')
@@ -70,10 +64,12 @@ export class ReservaService {
         .leftJoinAndSelect('cancha.id_deporte', 'deporte')
         .where('club.id_club = :idClub', { idClub })
         .getMany();
+      
       return queryReservas.map((reserva) => this.normalizarReserva(reserva));
+    } catch (error) {
+      console.error('Error fetching reservations for club:', error);
+      throw error;
     }
-
-    return reservas.map((reserva) => this.normalizarReserva(reserva));
   }
 
   async findOne(id: number) {
