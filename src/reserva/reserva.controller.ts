@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException 
 import { ReservaService } from './reserva.service';
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, ParseIntPipe } from '@nestjs/common';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guard/roles.guard';
@@ -25,13 +25,13 @@ export class ReservaController {
 
   @Get('usuario/:idUsuario')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden ver sus reservas
-  findByUsuario(@Param('idUsuario') idUsuario: string) {
-    return this.reservaService.findByUsuario(+idUsuario);
+  findByUsuario(@Param('idUsuario', ParseIntPipe) idUsuario: number) {
+    return this.reservaService.findByUsuario(idUsuario);
   }
 
   @Get('club/:idClub')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden ver reservas por club
-  findByClub(@Param('idClub') idClub: number) {
+  findByClub(@Param('idClub', ParseIntPipe) idClub: number) {
     return this.reservaService.findByClub(+idClub);
   }
 
