@@ -4,7 +4,7 @@ import { MailService } from './mail.service';
 
 @Controller('contact')
 export class MailController {
-  constructor(private readonly mailService: MailService) {}
+  constructor(private readonly mailService: MailService) { }
 
   @Post()
   async send(@Body() body: MailDto) {
