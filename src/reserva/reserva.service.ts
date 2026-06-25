@@ -56,8 +56,16 @@ export class ReservaService {
   }
 
   async findByClub(idClub: number) {
+    //     > const reservas = await this.reservaRepository.find({
+    // >   where: { 
+    // >     cancha: { 
+    // >       id_club: idClub
+    // >     } 
+    // >   },
+    // >   relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
+    // > });
     const reservas = await this.reservaRepository.find({
-      where: { cancha: { id_club: { id_club: idClub } } },
+      where: { cancha: { id_club: { id_club: idClub } } },            // ERROR          ////////////////////////////////////////////////////
       relations: ['usuario', 'cancha', 'cancha.id_club', 'cancha.id_deporte']
     });
 
@@ -68,7 +76,7 @@ export class ReservaService {
         .leftJoinAndSelect('reserva.cancha', 'cancha')
         .leftJoinAndSelect('cancha.id_club', 'club')
         .leftJoinAndSelect('cancha.id_deporte', 'deporte')
-        .where('cancha.id_club = :idClub', { idClub })
+        .where('cancha.id_club = :idClub', { idClub })                  // ERROR          ////////////////////////////////////////////////////
         .getMany();
       return queryReservas.map((reserva) => this.normalizarReserva(reserva));
     }
