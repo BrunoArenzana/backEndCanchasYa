@@ -71,13 +71,21 @@ export class CanchaService {
     delete (rest as any).techada;
     delete (rest as any).capacidad;
 
-    const payload = {
-      ...rest,
-      ...(id_club !== undefined ? { id_club: { id_club } as any } : {}),
-      ...(id_deporte !== undefined ? { id_deporte: { id_deporte } as any } : {}),
-    };
+    const cancha = await this.canchaRepository.findOne({ where: { id_cancha: id } });
+    if (!cancha) return null;
 
-    return this.canchaRepository.update({ id_cancha: id }, payload);
+    Object.assign(cancha, rest);
+
+    if (id_club !== undefined) {
+      cancha.id_club = { id_club } as any;
+    }
+
+    if (id_deporte !== undefined) {
+      cancha.id_deporte = { id_deporte } as any;
+    }
+
+    const canchaGuardada = await this.canchaRepository.save(cancha);
+    return this.findOne(canchaGuardada.id_cancha);
   }
 
   remove(id: number) {
