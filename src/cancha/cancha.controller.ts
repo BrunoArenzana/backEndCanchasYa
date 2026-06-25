@@ -25,7 +25,7 @@ export class CanchaController {
 
   @Get(':id')
     @UseGuards(AuthGuard) //solo los usuarios autenticados pueden ver detalles de una cancha
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.canchaService.findOne(+id);
   }
 
@@ -39,14 +39,14 @@ export class CanchaController {
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('dueno', 'admin', 'club') //solo los dueños y admins pueden actualizar canchas
-  update(@Param('id') id: string, @Body() updateCanchaDto: UpdateCanchaDto) {
+  update(@Param('id') id: number, @Body() updateCanchaDto: UpdateCanchaDto) {
     return this.canchaService.update(+id, updateCanchaDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('dueno', 'admin', 'club') //solo los dueños y admins pueden eliminar canchas
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.canchaService.remove(+id);
   }
 }

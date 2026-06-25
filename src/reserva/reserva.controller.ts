@@ -31,13 +31,13 @@ export class ReservaController {
 
   @Get('club/:idClub')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden ver reservas por club
-  findByClub(@Param('idClub') idClub: string) {
+  findByClub(@Param('idClub') idClub: number) {
     return this.reservaService.findByClub(+idClub);
   }
 
   @Get(':id')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden ver una reserva específica
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     const numericId = +id;
     if (isNaN(numericId)) throw new BadRequestException('ID inválido');
     return this.reservaService.findOne(numericId);
@@ -45,7 +45,7 @@ export class ReservaController {
 
   @Patch(':id')
   @UseGuards(AuthGuard) //solo los usuarios autenticados pueden actualizar reservas
-  update(@Param('id') id: string, @Body() updateReservaDto: UpdateReservaDto) {
+  update(@Param('id') id: number, @Body() updateReservaDto: UpdateReservaDto) {
     const numericId = +id;
     if (isNaN(numericId)) throw new BadRequestException('ID inválido');
     return this.reservaService.update(numericId, updateReservaDto);
@@ -54,7 +54,7 @@ export class ReservaController {
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard) //solo los usuarios autenticados con rol admin pueden eliminar reservas
   @Roles('usuario', 'admin')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     const numericId = +id;
     if (isNaN(numericId)) throw new BadRequestException('ID inválido');
     return this.reservaService.remove(numericId);

@@ -59,28 +59,28 @@ export class ClubController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.clubService.findOne(+id);
   }
 
   @Put(':id/toggle-status')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  toggleStatus(@Param('id') id: string, @Body('activo') activo: boolean) {
+  toggleStatus(@Param('id') id: number, @Body('activo') activo: boolean) {
     return this.clubService.toggleStatus(+id, activo);
   }
 
   @Put(':id/aceptar')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  aceptar(@Param('id') id: string) {
+  aceptar(@Param('id') id: number) {
     return this.clubService.aceptar(+id);
   }
 
   @Put(':id/rechazar')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('admin')
-  rechazar(@Param('id') id: string) {
+  rechazar(@Param('id') id: number) {
     return this.clubService.rechazar(+id);
   }
 
@@ -116,21 +116,21 @@ export class ClubController {
       },
     }),
   )
-  updateLogo(@Param('id') id: string, @UploadedFile() file: any) {
+  updateLogo(@Param('id') id: number, @UploadedFile() file: any) {
     return this.clubService.updateLogo(+id, file);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('dueno', 'admin', 'club')
-  update(@Param('id') id: string, @Body() updateClubDto: UpdateClubDto) {
+  update(@Param('id') id: number, @Body() updateClubDto: UpdateClubDto) {
     return this.clubService.update(+id, updateClubDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('dueno', 'admin', 'club')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.clubService.remove(+id);
   }
 }

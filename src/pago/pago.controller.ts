@@ -18,17 +18,17 @@ export class PagoController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.pagoService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePagoDto: UpdatePagoDto) {
+  update(@Param('id') id: number, @Body() updatePagoDto: UpdatePagoDto) {
     return this.pagoService.update(+id, updatePagoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.pagoService.remove(+id);
   }
 }

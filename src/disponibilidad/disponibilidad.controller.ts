@@ -38,21 +38,21 @@ export class DisponibilidadController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.disponibilidadService.findOne(+id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('dueno', 'admin', 'club')
-  update(@Param('id') id: string, @Body() updateDisponibilidadDto: UpdateDisponibilidadDto) {
+  update(@Param('id') id: number, @Body() updateDisponibilidadDto: UpdateDisponibilidadDto) {
     return this.disponibilidadService.update(+id, updateDisponibilidadDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('dueno', 'admin', 'club')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.disponibilidadService.remove(+id);
   }
 }

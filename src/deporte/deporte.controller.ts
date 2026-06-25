@@ -18,17 +18,17 @@ export class DeporteController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.deporteService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeporteDto: UpdateDeporteDto) {
+  update(@Param('id') id: number, @Body() updateDeporteDto: UpdateDeporteDto) {
     return this.deporteService.update(+id, updateDeporteDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.deporteService.remove(+id);
   }
 }
