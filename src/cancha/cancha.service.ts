@@ -66,6 +66,11 @@ export class CanchaService {
   async update(id: number, updateCanchaDto: UpdateCanchaDto) {
     const { id_club, id_deporte, ...rest } = updateCanchaDto;
 
+    // Remove extra properties sent by frontend that do not exist in the database entity
+    delete (rest as any).tipo_suelo;
+    delete (rest as any).techada;
+    delete (rest as any).capacidad;
+
     const payload = {
       ...rest,
       ...(id_club !== undefined ? { id_club: { id_club } as any } : {}),
