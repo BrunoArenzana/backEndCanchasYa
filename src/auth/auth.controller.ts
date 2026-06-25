@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   login(@Body() body: any) {
@@ -22,11 +22,11 @@ export class AuthController {
     return this.authService.registerDueno(body, file);
   }
 
-  @Post('id: number-password/send-code')
-  sendPasswordResetCode(@Body() body: any) {
+  @Post('send-password-reset-code')
+  sendPasswordResetCode(@Body() body: { email: string }) {
+    // Tomamos el email del body y lo pasamos al servicio.
     return this.authService.sendPasswordResetCode(body.email);
   }
-
   @Post('id: number-password/reset')
   resetPassword(@Body() body: any) {
     return this.authService.resetPassword(
