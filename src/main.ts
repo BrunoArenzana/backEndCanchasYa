@@ -16,7 +16,7 @@ const corsOrigin = process.env.CORS_ORIGIN || '*';
   const allowedOrigins = corsOrigin === '*' ? '*' : corsOrigin.split(',').map((origin) => origin.trim());
 
   app.enableCors({
-    origin: true, // Permitir todos los orígenes temporalmente para debug móvil
+    origin: allowedOrigins, // Permitir todos los orígenes temporalmente para debug móvil
     credentials: true, // Desactivar credentials para simplificar CORS en móviles
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
