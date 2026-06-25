@@ -22,12 +22,12 @@ export class AuthController {
     return this.authService.registerDueno(body, file);
   }
 
-  @Post('forgot-password/send-code')
+  @Post('id: number-password/send-code')
   sendPasswordResetCode(@Body() body: any) {
     return this.authService.sendPasswordResetCode(body.email);
   }
 
-  @Post('forgot-password/reset')
+  @Post('id: number-password/reset')
   resetPassword(@Body() body: any) {
     return this.authService.resetPassword(
       body.email,
