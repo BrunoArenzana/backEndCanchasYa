@@ -7,14 +7,14 @@ import { MailController } from './mail.controller';
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-        port: Number(process.env.EMAIL_PORT) || 587,
+        host: process.env.MAIL_HOST || 'smtp.gmail.com',
+        port: Number(process.env.MAIL_PORT) || 587,
         secure: false,
         // @ts-expect-error: TypeScript no mapea esta propiedad de Node.js, pero es necesaria para forzar IPv4
         family: 4,
         auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
         },
       },
     }),
