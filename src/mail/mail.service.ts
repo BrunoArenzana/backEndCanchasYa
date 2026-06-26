@@ -1,6 +1,6 @@
 import { Injectable, Inject, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Resend } from 'resend';
+import { gmail_v1 } from 'googleapis';
 import * as path from 'path';
 import * as fs from 'fs';
 import { MailDto } from './dto/create-mail.dto';
@@ -10,9 +10,9 @@ export class MailService {
   // Mapa en memoria para almacenar marcas de tiempo y evitar reenvíos rápidos.
   private readonly recentMails = new Map<string, number>();
 
-  // Cambiamos el constructor para inyectar el cliente oficial de Resend y ConfigService.
+  // Constructor para inyectar el cliente oficial de Gmail API y ConfigService.
   constructor(
-    @Inject('RESEND_CLIENT') private readonly resend: Resend,
+    @Inject('GMAIL_CLIENT') private readonly gmail: gmail_v1.Gmail,
     private readonly configService: ConfigService,
   ) {}
 
@@ -149,19 +149,10 @@ export class MailService {
       htmlContent = htmlContent.replace(/\{\{message\}\}/g, data.message || '');
       htmlContent = htmlContent.replace(/\{\{emojiDeporte\}\}/g, emojiDeporte);
 
-      // LLAMADA A RESEND: Cambiamos mailerService.sendMail por resend.emails.send (HTTP)
-      const response = await this.resend.emails.send({
-        from: 'CanchasYa! <onboarding@resend.dev>', // Modificar tras validar tu dominio real en Resend
-        to: [data.email],
-        subject: subjectNormalizado,
-        html: htmlContent,
-      });
+      // LLAMADA A GMAIL API REST
+      await this.sendGmail(data.email, subjectNormalizado, htmlContent);
 
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
-
-      console.log(`Mail enviado exitosamente a ${data.email} vía Resend: ${subjectNormalizado}`);
+      console.log(`Mail enviado exitosamente a ${data.email} vía Gmail API: ${subjectNormalizado}`);
     } catch (error) {
       console.error('Error al enviar mail en MailService:', error);
       throw new InternalServerErrorException('Error en el servicio de mensajería externa.');
@@ -188,22 +179,48 @@ export class MailService {
       htmlContent = htmlContent.replace(/\{\{codigo\}\}/g, data.codigo || '');
       htmlContent = htmlContent.replace(/\{\{minutos\}\}/g, String(data.minutos || 10));
 
-      // LLAMADA A RESEND: Despacho HTTP del correo de recuperación
-      const response = await this.resend.emails.send({
-        from: 'CanchasYa! <onboarding@resend.dev>',
-        to: [data.email],
-        subject,
-        html: htmlContent,
-      });
+      // LLAMADA A GMAIL API REST
+      await this.sendGmail(data.email, subject, htmlContent);
 
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
-
-      console.log(`Código de recuperación enviado a ${data.email} vía Resend`);
+      console.log(`Código de recuperación enviado a ${data.email} vía Gmail API`);
     } catch (error) {
       console.error('Error al enviar código de recuperación en MailService:', error);
       throw new InternalServerErrorException('No se pudo despachar el código de seguridad.');
     }
+  }
+
+  // FUNCIÓN AUXILIAR: sendGmail
+  // ¿Qué hace?: Formatea el correo electrónico en formato MIME (RFC 2822) y lo despacha
+  // utilizando la API REST de Gmail (users.messages.send).
+  private async sendGmail(to: string, subject: string, htmlContent: string): Promise<void> {
+    const fromEmail = this.configService.get<string>('GOOGLE_USER_EMAIL') || 'ycanchas@gmail.com';
+    const fromName = 'CanchasYa!';
+    const fromHeader = `${fromName} <${fromEmail}>`;
+
+    const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
+    const messageParts = [
+      `From: ${fromHeader}`,
+      `To: ${to}`,
+      'Content-Type: text/html; charset=utf-8',
+      'MIME-Version: 1.0',
+      `Subject: ${utf8Subject}`,
+      '',
+      htmlContent,
+    ];
+    const message = messageParts.join('\n');
+
+    // Codificación en Base64URL
+    const encodedMessage = Buffer.from(message)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    await this.gmail.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: encodedMessage,
+      },
+    });
   }
 }
