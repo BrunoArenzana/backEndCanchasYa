@@ -31,26 +31,41 @@ import { APP_GUARD } from '@nestjs/core';
             autoLoadEntities: true,
             synchronize: false,
         }),
-        MailerModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                transport: {
-                    host: config.get('MAIL_HOST') || 'smtp.gmail.com',
-                    port: Number(config.get('MAIL_PORT')) || 587,
-                    secure: false,
-                    //ts-expect-error: TypeScript doesn't map family but node uses 
-                    // it for ipv4
-                    family: 4,
-                    auth: {
-                        user: config.get('MAIL_USER'),
-                        pass: config.get('MAIL_PASS'),
-                    },
+
+        MailerModule.forRoot({
+            transport: {
+                host: process.env.MAIL_HOST || 'smtp.gmail.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
                 },
-                defaults: {
-                    from: config.get('MAIL_FROM') || config.get('MAIL_USER'),
-                },
-            }),
+                tls: {
+                    rejectUnauthorized: false, // Permite la conexión desde Render
+                }
+            }
         }),
+        // MailerModule.forRootAsync({
+        //     inject: [ConfigService],
+        //     useFactory: (config: ConfigService) => ({
+        //         transport: {
+        //             host: config.get('MAIL_HOST') || 'smtp.gmail.com',
+        //             port: Number(config.get('MAIL_PORT')) || 587,
+        //             secure: false,
+        //             //ts-expect-error: TypeScript doesn't map family but node uses 
+        //             // it for ipv4
+        //             family: 4,
+        //             auth: {
+        //                 user: config.get('MAIL_USER'),
+        //                 pass: config.get('MAIL_PASS'),
+        //             },
+        //         },
+        //         defaults: {
+        //             from: config.get('MAIL_FROM') || config.get('MAIL_USER'),
+        //         },
+        //     }),
+        // }),
         ReservaModule,
         ClubModule,
         PagoModule,
