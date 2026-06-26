@@ -14,7 +14,7 @@ import { GeorefModule } from './georef/georef.module';
 import { AuthModule } from './auth/auth.module'
 import { RolesGuard } from './auth/guard/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
-    
+
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -27,7 +27,7 @@ import { APP_GUARD } from '@nestjs/core';
             username: process.env.DB_USERNAME,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE,
-            ssl: {rejectUnauthorized: false},
+            ssl: { rejectUnauthorized: false },
             autoLoadEntities: true,
             synchronize: false,
         }),
@@ -35,16 +35,19 @@ import { APP_GUARD } from '@nestjs/core';
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
                 transport: {
-                    host: config.get('MAIL_HOST'),
-                    port: Number(config.get('MAIL_PORT')),
+                    host: config.get('MAIL_HOST') || 'smtp.gmail.com',
+                    port: Number(config.get('MAIL_PORT')) || 587,
                     secure: false,
+                    //ts-expect-error: TypeScript doesn't map family but node uses 
+                    // it for ipv4
+                    family: 4,
                     auth: {
                         user: config.get('MAIL_USER'),
                         pass: config.get('MAIL_PASS'),
                     },
                 },
                 defaults: {
-                    from: config.get('MAIL_FROM'),
+                    from: config.get('MAIL_FROM') || config.get('MAIL_USER'),
                 },
             }),
         }),
@@ -61,6 +64,6 @@ import { APP_GUARD } from '@nestjs/core';
     ],
     controllers: [],
     providers: [/*{ provide: APP_GUARD , useClass: RolesGuard }*/],
-    
+
 })
 export class AppModule { }
