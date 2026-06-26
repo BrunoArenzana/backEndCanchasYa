@@ -8,7 +8,6 @@ import { DeporteModule } from './deporte/deporte.module';
 import { CanchaModule } from './cancha/cancha.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
 import { GeorefModule } from './georef/georef.module';
 import { AuthModule } from './auth/auth.module'
@@ -72,7 +71,6 @@ import { APP_GUARD } from '@nestjs/core';
         DeporteModule,
         CanchaModule,
         DisponibilidadModule,
-        MailModule,
         UserModule,
         GeorefModule,
         AuthModule,
