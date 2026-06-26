@@ -1,22 +1,25 @@
-import { Module, Global } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
+import { MailService } from './mail.service';
+import { MailController } from './mail.controller';
 
-@Global() // Lo hacemos global para usarlo en cualquier servicio sin reimportar
 @Module({
   imports: [ConfigModule],
+  controllers: [MailController],
   providers: [
+    MailService,
     {
       provide: 'RESEND_CLIENT',
-      // FUNCIÓN: Fábrica del Cliente Resend
-      // ¿Qué hace?: Inicializa la instancia oficial de Resend usando la API Key de Render.
       useFactory: (configService: ConfigService) => {
-        const apiKey = configService.get<string>('RESEND_API_KEY');
-        return new Resend(apiKey);
+        return new Resend(configService.get<string>('RESEND_API_KEY'));
       },
       inject: [ConfigService],
     },
   ],
-  exports: ['RESEND_CLIENT'], // Exportamos el token para que otros servicios lo usen
+  // 👇 AQUÍ ES DONDE LO EXPORTAS 👇
+  // FUNCIÓN: Exports del Módulo
+  // ¿Qué hace?: Hace que el MailService sea "público" para que otros módulos (como AuthModule) puedan usarlo.
+  exports: [MailService], 
 })
-export class EmailModule {}
+export class MailModule {} // <- Recuerda que el nombre de la clase debe ser exactamente MailModule
