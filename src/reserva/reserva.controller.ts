@@ -44,7 +44,7 @@ export class ReservaController {
   }
 
   /*
-    Simulación local para demo.
+    Simulación local para dem MP
     Sirve para marcar el pago como aprobado, rechazado o pendiente sin depender
     de que Mercado Pago pueda volver a localhost.
   */
