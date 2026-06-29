@@ -252,7 +252,7 @@ export class ReservaService {
         cancha_id: reserva.cancha?.id_cancha,
       },
     };
-
+//MERCADO PAGO
     const response = await fetch(
       'https://api.mercadopago.com/checkout/preferences',
       {
