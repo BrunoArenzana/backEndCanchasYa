@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { CreateReservaDto } from './dto/create-reserva.dto';
 import { UpdateReservaDto } from './dto/update-reserva.dto';
+import { BloqueoCanchaService } from '../bloqueo-cancha/bloqueo-cancha.service';
 import { Reserva } from './entities/reserva.entity';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class ReservaService {
   constructor(
     @InjectRepository(Reserva)
     private readonly reservaRepository: Repository<Reserva>,
+    private readonly bloqueoCanchaService: BloqueoCanchaService,
   ) {}
 
   private normalizarReserva(reserva: Reserva | null) {
@@ -91,6 +93,20 @@ export class ReservaService {
       );
     }
 
+    const bloqueoExistente =
+      await this.bloqueoCanchaService.buscarActivoSolapado(
+        id_cancha,
+        fecha,
+        hora_inicio,
+        hora_fin,
+      );
+
+    if (bloqueoExistente) {
+      throw new ConflictException(
+        'La cancha fue bloqueada por el club para esa fecha y horario.',
+      );
+    }
+
     const reserva = this.reservaRepository.create({
       ...rest,
       fecha,
@@ -132,25 +148,51 @@ export class ReservaService {
   }
 
   async findDisponibilidad(idCancha: number, fecha: string) {
-    const reservas = await this.reservaRepository
-      .createQueryBuilder('reserva')
-      .innerJoin('reserva.cancha', 'cancha')
-      .where('cancha.id_cancha = :idCancha', { idCancha })
-      .andWhere('reserva.fecha = :fecha', { fecha })
-      .andWhere('reserva.estado != :estadoCancelado', {
-        estadoCancelado: 'cancelada',
-      })
-      .orderBy('reserva.hora_inicio', 'ASC')
-      .getMany();
+    const [reservas, bloqueos] = await Promise.all([
+      this.reservaRepository
+        .createQueryBuilder('reserva')
+        .innerJoin('reserva.cancha', 'cancha')
+        .where('cancha.id_cancha = :idCancha', { idCancha })
+        .andWhere('reserva.fecha = :fecha', { fecha })
+        .andWhere('reserva.estado != :estadoCancelado', {
+          estadoCancelado: 'cancelada',
+        })
+        .orderBy('reserva.hora_inicio', 'ASC')
+        .getMany(),
+      this.bloqueoCanchaService.findActivosPorCanchaYFecha(
+        idCancha,
+        fecha,
+      ),
+    ]);
 
-    return reservas.map((reserva) => ({
-      id_reserva: reserva.id_reserva,
-      id_cancha: idCancha,
-      fecha: reserva.fecha,
-      hora_inicio: reserva.hora_inicio,
-      hora_fin: reserva.hora_fin,
-      estado: reserva.estado,
-    }));
+    const ocupaciones = [
+      ...reservas.map((reserva) => ({
+        tipo_ocupacion: 'reserva',
+        id_reserva: reserva.id_reserva,
+        id_bloqueo: null,
+        id_cancha: idCancha,
+        fecha: reserva.fecha,
+        hora_inicio: reserva.hora_inicio,
+        hora_fin: reserva.hora_fin,
+        estado: reserva.estado,
+        motivo: null,
+      })),
+      ...bloqueos.map((bloqueo) => ({
+        tipo_ocupacion: 'bloqueo',
+        id_reserva: null,
+        id_bloqueo: bloqueo.id_bloqueo,
+        id_cancha: idCancha,
+        fecha: bloqueo.fecha,
+        hora_inicio: bloqueo.hora_inicio,
+        hora_fin: bloqueo.hora_fin,
+        estado: 'bloqueada',
+        motivo: bloqueo.motivo,
+      })),
+    ];
+
+    return ocupaciones.sort((a, b) =>
+      String(a.hora_inicio).localeCompare(String(b.hora_inicio)),
+    );
   }
 
   async findByClub(idClub: number) {
@@ -221,6 +263,20 @@ export class ReservaService {
       if (reservaExistente) {
         throw new ConflictException(
           'La cancha ya está reservada para esa fecha y horario.',
+        );
+      }
+
+      const bloqueoExistente =
+        await this.bloqueoCanchaService.buscarActivoSolapado(
+          idCanchaFinal,
+          fechaFinal,
+          horaInicioFinal,
+          horaFinFinal,
+        );
+
+      if (bloqueoExistente) {
+        throw new ConflictException(
+          'La cancha fue bloqueada por el club para esa fecha y horario.',
         );
       }
     }

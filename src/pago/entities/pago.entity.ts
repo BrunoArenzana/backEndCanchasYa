@@ -9,26 +9,35 @@ export class Pago {
   @Column({ name: 'monto', type: 'decimal', precision: 10, scale: 2 })
   monto!: number;
 
-  @Column({ 
-    name: 'metodo', 
+  @Column({
+    name: 'metodo',
     type: 'enum',
-    enum: ['efectivo', 'tarjeta', 'transferencia']
+    enum: ['efectivo', 'tarjeta', 'transferencia', 'mercado_pago'],
   })
   metodo!: string;
 
-  @Column({ 
-    name: 'estado', 
+  @Column({
+    name: 'estado',
     type: 'enum',
     enum: ['pendiente', 'completado', 'rechazado'],
-    default: 'pendiente'
+    default: 'pendiente',
   })
   estado!: string;
 
-  @Column({ name: 'referencia_externa', type: 'varchar', length: 100, nullable: true })
-  referencia_externa!: string;
+  /*
+    Para Mercado Pago se guarda aquí el payment_id.
+    También sigue siendo compatible con referencias de otros métodos de pago.
+  */
+  @Column({
+    name: 'referencia_externa',
+    type: 'varchar',
+    length: 120,
+    nullable: true,
+  })
+  referencia_externa!: string | null;
 
   @Column({ name: 'fecha_pago', type: 'datetime', nullable: true })
-  fecha_pago!: Date;
+  fecha_pago!: Date | null;
 
   @ManyToOne(() => Reserva, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_reserva' })
