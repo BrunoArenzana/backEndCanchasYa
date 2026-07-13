@@ -13,6 +13,7 @@ import { UserModule } from './user/user.module';
 import { GeorefModule } from './georef/georef.module';
 import { AuthModule } from './auth/auth.module'
 import { TorneoModule } from './torneo/torneo.module';
+import { BancoSuplentesModule } from './banco-suplentes/banco-suplentes.module';
 import { RolesGuard } from './auth/guard/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
     
@@ -59,6 +60,7 @@ import { APP_GUARD } from '@nestjs/core';
         GeorefModule,
         AuthModule,
         TorneoModule,
+        BancoSuplentesModule,
     ],
     controllers: [],
     providers: [/*{ provide: APP_GUARD , useClass: RolesGuard }*/],
