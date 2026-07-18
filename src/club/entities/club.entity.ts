@@ -35,6 +35,9 @@ export class Club {
   @Column({ name: 'descripcion_club', type: 'text', nullable: true })
   descripcion_club!: string;
 
+  @Column({ name: 'servicios_club', type: 'text', nullable: true })
+  servicios_club!: string | null;
+
   @Column({
     name: 'estado',
     type: 'enum',

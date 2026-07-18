@@ -44,8 +44,29 @@ export class ClubService {
     });
   }
 
-  update(id: number, updateClubDto: UpdateClubDto) {
-    return this.clubRepository.update(id, updateClubDto);
+  async update(id: number, updateClubDto: UpdateClubDto) {
+    const club = await this.clubRepository.findOne({
+      where: { id_club: id },
+    });
+
+    if (!club) {
+      throw new NotFoundException('Club no encontrado.');
+    }
+
+    await this.clubRepository.update(
+      { id_club: id },
+      {
+        ...updateClubDto,
+        servicios_club:
+          updateClubDto.servicios_club !== undefined
+            ? updateClubDto.servicios_club
+            : club.servicios_club,
+      },
+    );
+
+    return this.clubRepository.findOne({
+      where: { id_club: id },
+    });
   }
 
   remove(id: number) {
@@ -111,6 +132,8 @@ export class ClubService {
       telefono: club.telefono_club,
       canchas: club.deportes_club,
       direccion: club.direccion_club,
+      servicios: club.servicios_club,
+      servicios_club: club.servicios_club,
       activo: false,
     }));
   }
@@ -131,6 +154,8 @@ export class ClubService {
       ciudad: club.ciudad_club,
       provincia: club.provincia_club,
       logo: club.logo_club,
+      servicios: club.servicios_club,
+      servicios_club: club.servicios_club,
       activo: club.estado === 'activo',
       detallesCanchas:
         club.canchas
