@@ -84,6 +84,9 @@ export class DisponibilidadJugador {
   })
   estado!: EstadoDisponibilidadJugador;
 
+  @Column({ name: 'oculta_para_creador', type: 'boolean', default: false })
+  oculta_para_creador!: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
 

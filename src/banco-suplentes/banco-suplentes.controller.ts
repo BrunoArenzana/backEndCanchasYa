@@ -161,4 +161,15 @@ export class BancoSuplentesController {
       request.user,
     );
   }
+
+  @Delete('solicitudes/:id')
+  ocultarSolicitud(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() request: RequestAutenticada,
+  ) {
+    return this.bancoSuplentesService.ocultarSolicitud(
+      id,
+      request.user,
+    );
+  }
 }

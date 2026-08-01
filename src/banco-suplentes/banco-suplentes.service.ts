@@ -194,6 +194,9 @@ export class BancoSuplentesService {
           ? this.contactoUsuario(disponibilidad.usuario)
           : null,
       estado: disponibilidad.estado,
+      oculta_para_creador: Boolean(
+        disponibilidad.oculta_para_creador,
+      ),
       es_propia: esPropia,
       created_at: disponibilidad.created_at,
       updated_at: disponibilidad.updated_at,
@@ -219,6 +222,12 @@ export class BancoSuplentesService {
       mensaje: solicitud.mensaje,
       fecha_propuesta: solicitud.fecha_propuesta,
       hora_propuesta: solicitud.hora_propuesta,
+      oculta_para_solicitante: Boolean(
+        solicitud.oculta_para_solicitante,
+      ),
+      oculta_para_propietario: Boolean(
+        solicitud.oculta_para_propietario,
+      ),
       created_at: solicitud.created_at,
       disponibilidad: this.mapearDisponibilidad(
         solicitud.disponibilidad,
@@ -372,6 +381,7 @@ export class BancoSuplentesService {
     const disponibilidades = await this.disponibilidadRepository.find({
       where: {
         usuario: { id_usuario: idUsuario },
+        oculta_para_creador: false,
       },
       relations: ['usuario', 'deporte'],
       order: { updated_at: 'DESC' },
@@ -498,10 +508,11 @@ export class BancoSuplentesService {
     );
 
     disponibilidad.estado = EstadoDisponibilidadJugador.ELIMINADA;
+    disponibilidad.oculta_para_creador = true;
     await this.disponibilidadRepository.save(disponibilidad);
 
     return {
-      message: 'Publicación eliminada correctamente.',
+      message: 'Publicación quitada correctamente.',
       id_disponibilidad: idDisponibilidad,
     };
   }
@@ -596,6 +607,9 @@ export class BancoSuplentesService {
       .innerJoinAndSelect('disponibilidad.usuario', 'propietario')
       .innerJoinAndSelect('disponibilidad.deporte', 'deporte')
       .where('propietario.id_usuario = :idUsuario', { idUsuario })
+      .andWhere('solicitud.oculta_para_propietario = :oculta', {
+        oculta: false,
+      })
       .orderBy('solicitud.created_at', 'DESC')
       .getMany();
 
@@ -608,6 +622,7 @@ export class BancoSuplentesService {
     const solicitudes = await this.solicitudRepository.find({
       where: {
         solicitante: { id_usuario: idUsuario },
+        oculta_para_solicitante: false,
       },
       relations: [
         'solicitante',
@@ -690,4 +705,58 @@ export class BancoSuplentesService {
       usuarioAutenticado.sub,
     );
   }
+
+  async ocultarSolicitud(
+    idSolicitud: number,
+    usuarioAutenticado: UsuarioAutenticadoBanco,
+  ) {
+    const solicitud = await this.solicitudRepository.findOne({
+      where: { id_solicitud: idSolicitud },
+      relations: [
+        'solicitante',
+        'disponibilidad',
+        'disponibilidad.usuario',
+        'disponibilidad.deporte',
+      ],
+    });
+
+    if (!solicitud) {
+      throw new NotFoundException('Solicitud no encontrada.');
+    }
+
+    const esPropietario =
+      Number(solicitud.disponibilidad.usuario.id_usuario) ===
+      Number(usuarioAutenticado.sub);
+    const esSolicitante =
+      Number(solicitud.solicitante.id_usuario) ===
+      Number(usuarioAutenticado.sub);
+
+    if (!esPropietario && !esSolicitante) {
+      throw new ForbiddenException(
+        'No tenés permiso para quitar esta solicitud.',
+      );
+    }
+
+    if (solicitud.estado === EstadoSolicitudJugador.PENDIENTE) {
+      throw new BadRequestException(
+        'Primero gestioná la solicitud pendiente. Luego vas a poder quitarla de tu lista.',
+      );
+    }
+
+    if (esPropietario) {
+      solicitud.oculta_para_propietario = true;
+    }
+
+    if (esSolicitante) {
+      solicitud.oculta_para_solicitante = true;
+    }
+
+    await this.solicitudRepository.save(solicitud);
+
+    return {
+      message: 'Solicitud quitada correctamente.',
+      id_solicitud: idSolicitud,
+    };
+  }
+
 }

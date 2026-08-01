@@ -2,7 +2,7 @@
   "window.title": " 🟢 BACK END - ${rootName}",
 
   "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#06581f",
+    "titleBar.activeBackground": "#e20808",
     "titleBar.activeForeground": "#12028d"
   },
 

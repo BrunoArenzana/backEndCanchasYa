@@ -60,6 +60,12 @@ export class SolicitudJugador {
   })
   estado!: EstadoSolicitudJugador;
 
+  @Column({ name: 'oculta_para_solicitante', type: 'boolean', default: false })
+  oculta_para_solicitante!: boolean;
+
+  @Column({ name: 'oculta_para_propietario', type: 'boolean', default: false })
+  oculta_para_propietario!: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   created_at!: Date;
 
